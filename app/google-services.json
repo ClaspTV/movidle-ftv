@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "447241315028",
+    "project_id": "movidle",
+    "storage_bucket": "movidle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447241315028:android:8e197f4a60b53b211b9141",
+        "android_client_info": {
+          "package_name": "tv.vizbee.movidletv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhsp9Yr9FsZqTOlmWcz_50gjcw9kav08Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447241315028:android:f9b143b85c5e9d801b9141",
+        "android_client_info": {
+          "package_name": "tv.vizbee.movidletv.firetv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhsp9Yr9FsZqTOlmWcz_50gjcw9kav08Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_bg"
+    tools:context=".ui.StartGameActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/appLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="App Logo"
+            android:src="@drawable/app_logo" />
+
+        <TextView
+            android:id="@+id/titleText"
+            style="@style/TitleTextViewStyle"
+            android:layout_marginTop="48dp"
+            android:text="Connection Successful" />
+
+        <TextView
+            android:id="@+id/gameStartText"
+            style="@style/DescriptionTextViewStyle"
+            android:layout_marginTop="16dp"
+            android:text="Use your mobile to start or join the game." />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
