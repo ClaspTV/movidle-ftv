@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/app_bg"
+    android:orientation="vertical"
+    tools:context=".ui.WaitingForPlayersActivity">
+
+    <LinearLayout
+        android:id="@+id/content_lauout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/startGameTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="100dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/appLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="App Logo"
+                android:src="@drawable/app_logo" />
+
+            <TextView
+                android:id="@+id/titleText"
+                style="@style/TitleTextViewStyle"
+                android:layout_marginBottom="16dp"
+                android:text="MOVIE123"
+                android:textSize="48sp" />
+
+            <TextView
+                android:id="@+id/waitingText"
+                style="@style/DescriptionTextViewStyle"
+                android:text="Waiting for other players to join..." />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="16dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/playersJoinedText"
+                style="@style/TitleTextViewStyle"
+                android:layout_marginBottom="16dp"
+                android:paddingHorizontal="50dp"
+                android:text="Players Joined" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/waitingForPlayersRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:listitem="@layout/item_waiting_for_players_recycler_view" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/startGameTextView"
+        style="@style/TitleTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="100dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_with_white_bg"
+        android:gravity="center"
+        android:paddingHorizontal="32dp"
+        android:text="Start Game"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_lauout" />
+</LinearLayout>

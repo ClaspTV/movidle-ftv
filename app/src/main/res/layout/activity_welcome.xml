@@ -28,25 +28,14 @@
 
         <TextView
             android:id="@+id/welcomeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/TitleTextViewStyle"
             android:layout_marginTop="48dp"
-            android:text="Welcome To Movidle!"
-            android:textColor="@android:color/white"
-            android:textSize="36sp"
-            android:textStyle="bold" />
+            android:text="Welcome To Movidle!" />
 
         <TextView
             android:id="@+id/instructionText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/DescriptionTextViewStyle"
             android:layout_marginTop="16dp"
-            android:text="Start the game by connecting your\nmobile to this TV."
-            android:textAlignment="center"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
+            android:text="Start the game by connecting your\nmobile to this TV." />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

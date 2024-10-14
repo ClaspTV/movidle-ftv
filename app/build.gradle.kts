@@ -73,9 +73,16 @@ dependencies {
     implementation(libs.androidx.leanback)
     implementation("androidx.core:core-splashscreen:1.0.1")
 
+    // RecyclerView dependency
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
     // Vizbee
     "firetvImplementation"("tv.vizbee:firetv-receiver-sdk:4.2.4")
     "androidtvImplementation"("tv.vizbee:androidtv-receiver-sdk:4.1.7")
+
+    // ExoPlayer
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.19.1")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))

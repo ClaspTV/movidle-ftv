@@ -2,32 +2,27 @@ package tv.vizbee.movidletv.ui
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import tv.vizbee.movidletv.R
-import tv.vizbee.movidletv.databinding.ActivityWelcomeBinding
-import tv.vizbee.movidletv.utils.TimerUtils
 
-class WelcomeActivity : BaseActivity() {
+class GameScoreActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val binding = ActivityWelcomeBinding.inflate(layoutInflater)
-
-        setContentView(binding.root)
+        setContentView(R.layout.activity_game_score)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
 
-//        TimerUtils.executeAfterDelay(5000) {
-//            navigate(this, StartGameCountDownActivity::class.java)
-//        }
-
-        binding.root.setOnClickListener {
-            navigate(this, StartGameActivity::class.java)
-        }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        navigate(this, StartGameActivity::class.java)
+        finish()
     }
 }
