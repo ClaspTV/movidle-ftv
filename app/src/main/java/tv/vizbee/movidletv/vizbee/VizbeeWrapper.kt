@@ -37,6 +37,7 @@ object VizbeeWrapper {
         }
 
         // Initialise Vizbee Continuity SDK
+        Vizbee.getInstance().enableVerboseLogging()
         Vizbee.getInstance().initialize(app, getVizbeeAppId(app), VizbeeAppAdapter())
     }
 

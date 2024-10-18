@@ -28,18 +28,16 @@
 
         <TextView
             style="@style/TitleTextViewStyle"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="16dp"
             android:text="Movie 1 Completed" />
 
-        <TextView
-            style="@style/DescriptionTextViewStyle"
-            android:layout_marginTop="16dp"
-            android:text="Your Score" />
-
-        <TextView
-            style="@style/TitleTextViewStyle"
-            android:layout_marginTop="16dp"
-            android:text="50"
-            android:textSize="48sp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scoresRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="4"
+            tools:listitem="@layout/item_scores_recycler_view" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

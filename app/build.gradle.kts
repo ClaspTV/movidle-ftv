@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.leanback)
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.35.0")
 
     // RecyclerView dependency
     implementation("androidx.recyclerview:recyclerview:1.3.2")
