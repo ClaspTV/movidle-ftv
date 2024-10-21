@@ -4,8 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import tv.vizbee.movidletv.databinding.ItemWaitingForPlayersRecyclerViewBinding
+import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 
-class WaitingForPlayersRecyclerAdapter(val playerNames: ArrayList<String> = arrayListOf()) :
+class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<VizbeeDevice> = arrayListOf()) :
     RecyclerView.Adapter<WaitingForPlayersRecyclerAdapter.PlayerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
@@ -15,14 +16,25 @@ class WaitingForPlayersRecyclerAdapter(val playerNames: ArrayList<String> = arra
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.bind(playerNames[position] + " ${position + 1}")
+        holder.bind("${players[position].friendlyName} ${position + 1}")
     }
 
-    override fun getItemCount(): Int = playerNames.size
+    override fun getItemCount(): Int = players.size
 
-    fun addPlayer(playerName: String) {
-        playerNames.add(playerName)
-        notifyItemInserted(playerNames.size - 1)
+    fun addPlayer(player: VizbeeDevice?) {
+        player?.let {
+            players.add(it)
+            notifyItemInserted(players.size - 1)
+        }
+    }
+
+    fun updatePlayer(device: VizbeeDevice?) {
+        if (players.contains(device)) {
+            players.remove(device)
+            notifyDataSetChanged()
+        } else {
+            addPlayer(device)
+        }
     }
 
     inner class PlayerViewHolder(private val binding: ItemWaitingForPlayersRecyclerViewBinding) :

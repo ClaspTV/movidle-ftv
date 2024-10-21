@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import tv.vizbee.movidletv.R
@@ -24,6 +23,9 @@ class GameStatusActivity : BaseActivity() {
         binding = ActivityGameStatusBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        contentPosition = getContentPosition()
+        clipPosition = getClipPosition()
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -37,26 +39,50 @@ class GameStatusActivity : BaseActivity() {
         if (clipPosition == 0) {
             playVideo()
         } else {
-            if (clipPosition < 5) {
+            val clipSize = VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0
+            if (clipPosition <= clipSize) {
                 binding.gameStatusTitleText.text = "Movie 1 - Clip $clipPosition Ended"
                 binding.gameStatusDescriptionText.text = "Guess the movie name on your mobile"
                 Handler(Looper.getMainLooper()).postDelayed({
-                    playVideo()
-                }, 3000)
+                    if (clipPosition == clipSize) {
+                        navigateToGameScoreActivity()
+                    } else {
+                        playVideo()
+                    }
+                }, 30000)
             } else {
-                navigate(this, GameScoreActivity::class.java)
+                navigateToGameScoreActivity()
             }
         }
     }
 
+    private fun navigateToGameScoreActivity() {
+        Intent(this, GameScoreActivity::class.java).apply {
+            putExtra("contentPosition", contentPosition)
+            putExtra("clipPosition", clipPosition)
+        }.also {
+            startActivity(it)
+        }
+        if (VideoStorage.getMovie(contentPosition) == null) {
+            finish()
+        }
+    }
+
     private fun playVideo() {
-        VideoStorage.getMovie(contentPosition)?.get(clipPosition)?.let { videoUrl ->
+        VideoStorage.getMovieClip(contentPosition, clipPosition)?.let { videoUrl ->
             clipPosition++
             Intent(this, PlayerActivity::class.java).apply {
                 putExtra("videoUrl", videoUrl)
             }.also { startActivity(it) }
         } ?: kotlin.run {
-
+            contentPosition++
+            navigate(this, GameScoreActivity::class.java)
+//            VideoStorage.getMovie(contentPosition)?.let {
+//                playVideo()
+//            } ?: kotlin.run {
+//                // No Videos or clips to play
+//
+//            }
         }
     }
 

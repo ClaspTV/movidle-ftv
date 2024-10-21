@@ -71,15 +71,17 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.leanback)
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.35.0")
-
-    // RecyclerView dependency
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.interactivemedia)
+    implementation(libs.androidx.recyclerview)
+    implementation("com.google.code.gson:gson:2.9.0")
 
     // Vizbee
-    "firetvImplementation"("tv.vizbee:firetv-receiver-sdk:4.2.4")
+//    "firetvImplementation"("tv.vizbee:firetv-receiver-sdk:4.2.4")
+    "firetvImplementation"("tv.vizbee:firetv-receiver-sdk:4.2.5-rc6-x-messages")
     "androidtvImplementation"("tv.vizbee:androidtv-receiver-sdk:4.1.7")
+    // X SDK
+    implementation("tv.vizbee:android-receiver-x-sdk:1.0.0-rc11")
 
     // ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.19.1")

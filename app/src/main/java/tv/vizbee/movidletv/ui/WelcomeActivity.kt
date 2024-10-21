@@ -7,6 +7,7 @@ import androidx.core.view.WindowInsetsCompat
 import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.databinding.ActivityWelcomeBinding
 import tv.vizbee.movidletv.utils.TimerUtils
+import tv.vizbee.screen.api.Vizbee
 
 class WelcomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,12 +23,16 @@ class WelcomeActivity : BaseActivity() {
             insets
         }
 
-//        TimerUtils.executeAfterDelay(5000) {
-//            navigate(this, StartGameCountDownActivity::class.java)
-//        }
+        if (Vizbee.getInstance().wasAppLaunchedByVizbee()) {
+            navigateToStartGameActivity()
+        }
 
         binding.root.setOnClickListener {
-            navigate(this, StartGameActivity::class.java)
+            navigateToStartGameActivity()
         }
+    }
+
+    private fun navigateToStartGameActivity() {
+        navigate(this, StartGameActivity::class.java)
     }
 }
