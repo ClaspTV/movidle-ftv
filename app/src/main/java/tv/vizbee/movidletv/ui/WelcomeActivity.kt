@@ -6,7 +6,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.databinding.ActivityWelcomeBinding
-import tv.vizbee.movidletv.utils.TimerUtils
 import tv.vizbee.screen.api.Vizbee
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 
