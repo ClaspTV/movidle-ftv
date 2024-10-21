@@ -8,6 +8,7 @@ import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.databinding.ActivityWelcomeBinding
 import tv.vizbee.movidletv.utils.TimerUtils
 import tv.vizbee.screen.api.Vizbee
+import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 
 class WelcomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +31,12 @@ class WelcomeActivity : BaseActivity() {
         binding.root.setOnClickListener {
             navigateToStartGameActivity()
         }
+    }
+
+    override fun onDeviceChangeAction(device: VizbeeDevice?) {
+        super.onDeviceChangeAction(device)
+
+        navigateToStartGameActivity()
     }
 
     private fun navigateToStartGameActivity() {

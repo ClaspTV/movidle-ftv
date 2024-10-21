@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
-import tv.vizbee.movidletv.vizbee.VizbeeWrapper
+import tv.vizbee.movidletv.vizbee.VizbeeXMessageListeners
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -13,11 +13,11 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        VizbeeWrapper.getStartActivityEvent().observe(this) { pair ->
+        VizbeeXMessageListeners.getStartActivityEvent().observe(this) { pair ->
             onStartActivityAction(pair.first, pair.second)
         }
 
-        VizbeeWrapper.getDeviceChangeEvent().observe(this) { device ->
+        VizbeeXMessageListeners.getDeviceChangeEvent().observe(this) { device ->
             onDeviceChangeAction(device)
         }
     }

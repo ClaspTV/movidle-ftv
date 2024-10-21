@@ -1,10 +1,10 @@
 package tv.vizbee.movidletv.model
 
 import tv.vizbee.movidletv.model.movie.MovieItem
-import tv.vizbee.movidletv.vizbee.VizbeeWrapper
+import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
 object VideoStorage {
-    private val movieList = VizbeeWrapper.movies
+    private val movieList = VizbeeXWrapper.movies
 
     fun getMovie(contentPosition: Int): MovieItem? {
         if (contentPosition >= movieList.size) {

@@ -7,6 +7,7 @@ import androidx.core.view.WindowInsetsCompat
 import org.json.JSONObject
 import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.databinding.ActivityStartGameBinding
+import tv.vizbee.movidletv.vizbee.VizbeeXMessageType
 
 class StartGameActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,10 +22,6 @@ class StartGameActivity : BaseActivity() {
             insets
         }
 
-//        TimerUtils.executeAfterDelay(5000) {
-//            navigate(this, StartGameCountDownActivity::class.java)
-//        }
-
         binding.root.setOnClickListener {
             navigate(this, WaitingForPlayersActivity::class.java)
         }
@@ -33,6 +30,8 @@ class StartGameActivity : BaseActivity() {
     override fun onStartActivityAction(messageType: String, payload: JSONObject) {
         super.onStartActivityAction(messageType, payload)
 
-        navigate(this, WaitingForPlayersActivity::class.java)
+        if (messageType == VizbeeXMessageType.CREATE_GAME.value) {
+            navigate(this, WaitingForPlayersActivity::class.java)
+        }
     }
 }

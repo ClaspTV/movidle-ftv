@@ -1,7 +1,7 @@
 package tv.vizbee.movidletv.vizbee
 
 enum class VizbeeXMessageParameter(val value: String) {
-    MESSAGE_TYPE("msg_type"),
+    MESSAGE_TYPE("msgType"),
     CHANNEL_ID("channelId"),
 
     MOVIE_NAME("movieName"),

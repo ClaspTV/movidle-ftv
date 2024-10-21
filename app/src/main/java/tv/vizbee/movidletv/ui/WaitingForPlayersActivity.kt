@@ -10,7 +10,7 @@ import org.json.JSONObject
 import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.adapter.WaitingForPlayersRecyclerAdapter
 import tv.vizbee.movidletv.databinding.ActivityWaitingForPlayersBinding
-import tv.vizbee.movidletv.vizbee.VizbeeWrapper
+import tv.vizbee.movidletv.vizbee.PlayerManager
 import tv.vizbee.movidletv.vizbee.VizbeeXMessageType
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 
@@ -63,7 +63,7 @@ class WaitingForPlayersActivity : BaseActivity() {
             adapter = WaitingForPlayersRecyclerAdapter()
         }
 
-        VizbeeWrapper.devices.forEach {
+        PlayerManager.players.forEach {
             addPlayer(it)
         }
     }
