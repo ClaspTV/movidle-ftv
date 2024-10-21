@@ -27,6 +27,7 @@
             android:src="@drawable/app_logo" />
 
         <TextView
+            android:id="@+id/gameScoreTitle"
             style="@style/TitleTextViewStyle"
             android:layout_marginTop="16dp"
             android:text="Movie 1 Completed" />

@@ -30,7 +30,7 @@ class StartGameActivity : BaseActivity() {
     override fun onStartActivityAction(messageType: String, payload: JSONObject) {
         super.onStartActivityAction(messageType, payload)
 
-        if (messageType == VizbeeXMessageType.CREATE_GAME.value) {
+        if (messageType == VizbeeXMessageType.JOIN_GAME.value) {
             navigate(this, WaitingForPlayersActivity::class.java)
         }
     }

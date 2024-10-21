@@ -1,5 +1,6 @@
 package tv.vizbee.movidletv.model
 
+import tv.vizbee.movidletv.model.movie.MovieCLipItem
 import tv.vizbee.movidletv.model.movie.MovieItem
 import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
@@ -13,12 +14,12 @@ object VideoStorage {
         return movieList[contentPosition]
     }
 
-    fun getMovieClip(contentPosition: Int, clipPosition: Int): String? {
+    fun getMovieClip(contentPosition: Int, clipPosition: Int): MovieCLipItem? {
         val clips = getMovie(contentPosition)?.clips
 
         if (clipPosition >= (clips?.size ?: 0)) {
             return null
         }
-        return clips?.get(clipPosition)?.url
+        return clips?.get(clipPosition)
     }
 }

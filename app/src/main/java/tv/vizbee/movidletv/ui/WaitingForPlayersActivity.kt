@@ -63,7 +63,7 @@ class WaitingForPlayersActivity : BaseActivity() {
             adapter = WaitingForPlayersRecyclerAdapter()
         }
 
-        PlayerManager.players.forEach {
+        PlayerManager.devices.forEach {
             addPlayer(it)
         }
     }

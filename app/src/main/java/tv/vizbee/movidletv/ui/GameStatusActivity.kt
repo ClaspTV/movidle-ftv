@@ -7,9 +7,13 @@ import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import org.json.JSONObject
 import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.databinding.ActivityGameStatusBinding
 import tv.vizbee.movidletv.model.VideoStorage
+import tv.vizbee.movidletv.vizbee.VizbeeXMessageParameter
+import tv.vizbee.movidletv.vizbee.VizbeeXMessageType
+import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
 class GameStatusActivity : BaseActivity() {
     private lateinit var binding: ActivityGameStatusBinding
@@ -40,18 +44,18 @@ class GameStatusActivity : BaseActivity() {
             playVideo()
         } else {
             val clipSize = VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0
-            if (clipPosition <= clipSize) {
+            if (clipSize != 0) {
+                sendGameStatus("clip_ended")
                 binding.gameStatusTitleText.text = "Movie 1 - Clip $clipPosition Ended"
                 binding.gameStatusDescriptionText.text = "Guess the movie name on your mobile"
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (clipPosition == clipSize) {
+                        sendGameStatus("movie_completed")
                         navigateToGameScoreActivity()
                     } else {
                         playVideo()
                     }
                 }, 30000)
-            } else {
-                navigateToGameScoreActivity()
             }
         }
     }
@@ -61,6 +65,8 @@ class GameStatusActivity : BaseActivity() {
             putExtra("contentPosition", contentPosition)
             putExtra("clipPosition", clipPosition)
         }.also {
+            contentPosition++
+            clipPosition = 0
             startActivity(it)
         }
         if (VideoStorage.getMovie(contentPosition) == null) {
@@ -68,15 +74,35 @@ class GameStatusActivity : BaseActivity() {
         }
     }
 
+    private fun sendGameStatus(status: String) {
+        VizbeeXWrapper.sendMessageWithBiCast(JSONObject().apply {
+            put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.GAME_STATUS.value)
+            put(VizbeeXMessageParameter.STATUS.value, status)
+            put(VizbeeXMessageParameter.MOVIE_NAME.value, VideoStorage.getMovie(contentPosition)?.name ?: "")
+            put(
+                VizbeeXMessageParameter.CLIP_ID.value,
+                VideoStorage.getMovieClip(contentPosition, clipPosition)?.id ?: ""
+            )
+            put(
+                VizbeeXMessageParameter.CLIP_SCORE.value,
+                VideoStorage.getMovieClip(contentPosition, clipPosition)?.score ?: "0"
+            )
+        })
+    }
+
     private fun playVideo() {
-        VideoStorage.getMovieClip(contentPosition, clipPosition)?.let { videoUrl ->
+        VideoStorage.getMovieClip(contentPosition, clipPosition)?.url?.let { videoUrl ->
+            sendGameStatus("clip_started")
+
             clipPosition++
             Intent(this, PlayerActivity::class.java).apply {
                 putExtra("videoUrl", videoUrl)
-            }.also { startActivity(it) }
-        } ?: kotlin.run {
-            contentPosition++
-            navigate(this, GameScoreActivity::class.java)
+            }.also {
+                startActivity(it)
+            }
+//        } ?: kotlin.run {
+//            contentPosition++
+//            navigate(this, GameScoreActivity::class.java)
 //            VideoStorage.getMovie(contentPosition)?.let {
 //                playVideo()
 //            } ?: kotlin.run {

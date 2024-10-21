@@ -4,8 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import tv.vizbee.movidletv.databinding.ItemScoresRecyclerViewBinding
+import tv.vizbee.movidletv.vizbee.PlayerManager
 
-class ScoresRecyclerAdapter(val scores: ArrayList<String> = arrayListOf()) :
+class ScoresRecyclerAdapter(val players: ArrayList<PlayerManager.Player> = arrayListOf()) :
     RecyclerView.Adapter<ScoresRecyclerAdapter.ScoresViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScoresViewHolder {
@@ -15,16 +16,16 @@ class ScoresRecyclerAdapter(val scores: ArrayList<String> = arrayListOf()) :
     }
 
     override fun onBindViewHolder(holder: ScoresViewHolder, position: Int) {
-        holder.bind(scores[position], position)
+        holder.bind(players[position].score, position, players[position].username)
     }
 
-    override fun getItemCount(): Int = scores.size
+    override fun getItemCount(): Int = players.size
 
     inner class ScoresViewHolder(private val binding: ItemScoresRecyclerViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(score: String, position: Int) {
+        fun bind(score: String, position: Int, username: String) {
             binding.itemScoreRankTextView.text = "${position + 1}."
-            binding.itemScorePlayerNameTextView.text = "Player ${position}"
+            binding.itemScorePlayerNameTextView.text = "Player ${username}"
             binding.itemScoreScoreTextView.text = "$score"
         }
     }
