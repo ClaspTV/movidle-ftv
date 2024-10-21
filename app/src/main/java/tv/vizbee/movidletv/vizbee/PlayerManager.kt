@@ -1,7 +1,9 @@
 package tv.vizbee.movidletv.vizbee
 
+import android.util.Log
 import org.json.JSONObject
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
+import tv.vizbee.screen.api.session.model.device.VizbeeDeviceType
 
 object PlayerManager {
     val devices by lazy { arrayListOf<VizbeeDevice>() }
@@ -15,20 +17,24 @@ object PlayerManager {
         }
     }
 
-    fun addDevice(player: VizbeeDevice?) {
-        player?.let { actualPlayer ->
-            devices.find { it.deviceId == actualPlayer.deviceId } ?: {
-                devices.add(actualPlayer)
-                players.put(actualPlayer.deviceId, Player(actualPlayer.friendlyName, actualPlayer.deviceId))
+    fun addDevice(device: VizbeeDevice?) {
+        Log.i("PlayerManager", "Add Device invoked. device = ${device}")
+        device?.let { actualDevice ->
+            if (actualDevice.deviceType == VizbeeDeviceType.ANDROID_MOBILE || actualDevice.deviceType == VizbeeDeviceType.IOS) {
+                devices.find { it.deviceId == actualDevice.deviceId } ?: kotlin.run {
+                    devices.add(actualDevice)
+                    players.put(actualDevice.deviceId, Player(actualDevice.friendlyName, actualDevice.deviceId))
+                }
             }
         }
     }
 
-    fun removeDevice(player: VizbeeDevice?) {
-        player?.let { actualPlayer ->
-            devices.find { it.deviceId == actualPlayer.deviceId }?.let {
+    fun removeDevice(device: VizbeeDevice?) {
+        Log.i("PlayerManager", "Remove Device invoked. device = ${device}")
+        device?.let { actualDevice ->
+            devices.find { it.deviceId == actualDevice.deviceId }?.let {
                 devices.remove(it)
-                players.remove(actualPlayer.deviceId)
+                players.remove(actualDevice.deviceId)
             }
         }
     }

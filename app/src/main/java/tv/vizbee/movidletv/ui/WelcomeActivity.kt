@@ -26,10 +26,6 @@ class WelcomeActivity : BaseActivity() {
         if (Vizbee.getInstance().wasAppLaunchedByVizbee()) {
             navigateToStartGameActivity()
         }
-
-        binding.root.setOnClickListener {
-            navigateToStartGameActivity()
-        }
     }
 
     override fun onDeviceChangeAction(device: VizbeeDevice?) {

@@ -2,6 +2,7 @@ package tv.vizbee.movidletv.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -12,6 +13,7 @@ import tv.vizbee.movidletv.adapter.WaitingForPlayersRecyclerAdapter
 import tv.vizbee.movidletv.databinding.ActivityWaitingForPlayersBinding
 import tv.vizbee.movidletv.vizbee.PlayerManager
 import tv.vizbee.movidletv.vizbee.VizbeeXMessageType
+import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 
 class WaitingForPlayersActivity : BaseActivity() {
@@ -91,6 +93,11 @@ class WaitingForPlayersActivity : BaseActivity() {
     override fun onDeviceChangeAction(device: VizbeeDevice?) {
         super.onDeviceChangeAction(device)
 
-        getAdapter()?.updatePlayer(device)
+        Log.i("WaitingForPlayersActivity", "Device change event: Current Devices ${PlayerManager.devices}")
+        if (PlayerManager.devices.contains(device)) {
+            getAdapter()?.addPlayer(device)
+        } else {
+            getAdapter()?.remove(device)
+        }
     }
 }

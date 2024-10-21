@@ -66,7 +66,7 @@ object VizbeeXWrapper {
                     val device = eventInfo.device
                     Log.i(LOG_TAG, "Device disconnected: ${device?.friendlyName}")
 
-                    removeDevice(device)
+                    device?.let { VizbeeXMessageListeners.triggerDeviceChange(it) }
                 }
             }
         }
@@ -157,6 +157,8 @@ object VizbeeXWrapper {
                 }
             }
         }
+
+        Log.i(LOG_TAG, "Current members = ${channelVizbeeX.members}")
         PlayerManager.addAll(channelVizbeeX.members)
     }
 

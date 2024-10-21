@@ -16,7 +16,7 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<VizbeeDevi
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.bind("${players[position].modelName} ${position + 1}")
+        holder.bind("${players[position].deviceId} ${position + 1}")
     }
 
     override fun getItemCount(): Int = players.size
@@ -28,13 +28,9 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<VizbeeDevi
         }
     }
 
-    fun updatePlayer(device: VizbeeDevice?) {
-        if (players.contains(device)) {
-            players.remove(device)
-            notifyDataSetChanged()
-        } else {
-            addPlayer(device)
-        }
+    fun remove(device: VizbeeDevice?) {
+        players.remove(device)
+        notifyDataSetChanged()
     }
 
     inner class PlayerViewHolder(private val binding: ItemWaitingForPlayersRecyclerViewBinding) :

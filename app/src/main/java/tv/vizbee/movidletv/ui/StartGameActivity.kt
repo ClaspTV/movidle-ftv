@@ -21,10 +21,6 @@ class StartGameActivity : BaseActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        binding.root.setOnClickListener {
-            navigate(this, WaitingForPlayersActivity::class.java)
-        }
     }
 
     override fun onStartActivityAction(messageType: String, payload: JSONObject) {
