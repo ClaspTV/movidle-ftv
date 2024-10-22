@@ -27,8 +27,8 @@ class GameScoreActivity : BaseActivity() {
             insets
         }
 
-        val moviePosition = VideoStorage.getMovie(intent.getIntExtra("contentPosition", 0)) ?: 1
-        binding.gameScoreTitle.text = "Movie $moviePosition Completed"
+        val moviePosition = intent.getIntExtra("contentPosition", 0)
+        binding.gameScoreTitle.text = "Movie ${moviePosition + 1} Completed"
 
         binding.scoresRecyclerView.apply {
             val finalPlayers = ArrayList(PlayerManager.players.values)
@@ -40,7 +40,7 @@ class GameScoreActivity : BaseActivity() {
             if (VideoStorage.getMovie(intent.getIntExtra("contentPosition", 0) + 1) != null) {
                 finish()
             } else {
-                // Stay on the same screen
+                binding.gameScoreTitle.text = "All Movies Completed"
             }
         }, 30000)
     }

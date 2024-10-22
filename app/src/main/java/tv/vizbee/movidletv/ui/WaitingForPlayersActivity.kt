@@ -13,7 +13,6 @@ import tv.vizbee.movidletv.adapter.WaitingForPlayersRecyclerAdapter
 import tv.vizbee.movidletv.databinding.ActivityWaitingForPlayersBinding
 import tv.vizbee.movidletv.vizbee.PlayerManager
 import tv.vizbee.movidletv.vizbee.VizbeeXMessageType
-import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 
 class WaitingForPlayersActivity : BaseActivity() {
@@ -37,11 +36,9 @@ class WaitingForPlayersActivity : BaseActivity() {
                 startTheGame()
             } else {
                 addPlayer(
-                    VizbeeDevice(
-                        deviceId = getAdapter()?.itemCount.toString(),
-                        friendlyName = "${System.currentTimeMillis()}",
-                        modelName = "Vizbee Device",
-                        null, null, null
+                    PlayerManager.Player(
+                        userId = getAdapter()?.itemCount.toString(),
+                        userName = "${System.currentTimeMillis()}"
                     )
                 )
             }
@@ -65,12 +62,12 @@ class WaitingForPlayersActivity : BaseActivity() {
             adapter = WaitingForPlayersRecyclerAdapter()
         }
 
-        PlayerManager.devices.forEach {
+        PlayerManager.players.values.forEach {
             addPlayer(it)
         }
     }
 
-    private fun addPlayer(player: VizbeeDevice) {
+    private fun addPlayer(player: PlayerManager.Player) {
         (binding.waitingForPlayersRecyclerView.adapter as? WaitingForPlayersRecyclerAdapter)?.addPlayer(player)
     }
 
@@ -93,11 +90,11 @@ class WaitingForPlayersActivity : BaseActivity() {
     override fun onDeviceChangeAction(device: VizbeeDevice?) {
         super.onDeviceChangeAction(device)
 
-        Log.i("WaitingForPlayersActivity", "Device change event: Current Devices ${PlayerManager.devices}")
-        if (PlayerManager.devices.contains(device)) {
-            getAdapter()?.addPlayer(device)
-        } else {
-            getAdapter()?.remove(device)
+        Log.i("WaitingForPlayersActivity", "Device change event: Current Devices ${PlayerManager.players}")
+        PlayerManager.players.values.find { it.userId == device?.deviceId }?.let { player ->
+            getAdapter()?.addPlayer(player)
+        } ?: kotlin.run {
+            getAdapter()?.remove(device?.deviceId)
         }
     }
 }

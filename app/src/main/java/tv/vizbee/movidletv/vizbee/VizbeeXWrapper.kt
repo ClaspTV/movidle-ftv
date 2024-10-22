@@ -73,16 +73,9 @@ object VizbeeXWrapper {
     }
 
     fun sendMessageWithBiCast(payload: JSONObject) {
-        val message = VizbeeXMessage.create(payload)
-        vizbeeX.send(message, object : ICommandCallback<Unit> {
-            override fun onSuccess(success: Unit?) {
-                println("Message sent successfully")
-            }
+        Log.i(LOG_TAG, "send message with bicast is invoked. payload = $payload")
 
-            override fun onFailure(error: VizbeeError?) {
-                println("Failed to send message: ${error?.message}")
-            }
-        })
+        sendMessage(vizbeeX, payload)
     }
 
     private fun receiveMessageWithBiCast() {
@@ -105,6 +98,25 @@ object VizbeeXWrapper {
                         // 2. Start the waiting screen
                         VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
                     }
+
+                    PlayerManager.addPlayer(sender,
+                        payload.optString(VizbeeXMessageParameter.USER_ID.value),
+                        payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+                    )
+
+                    // When a user or player joins the game after connecting to TV, send a broadcast that the user
+                    // has joined
+                    sendMessageWithBroadcast(JSONObject().apply {
+                        put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.USER_JOINED.value)
+                        put(
+                            VizbeeXMessageParameter.USER_NAME.value,
+                            payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+                        )
+                        put(
+                            VizbeeXMessageParameter.USER_ID.value,
+                            payload.optString(VizbeeXMessageParameter.USER_ID.value)
+                        )
+                    })
                 }
             }
         }
@@ -115,7 +127,7 @@ object VizbeeXWrapper {
     private fun connectVizbeeXBroadcast(channelId: String) {
         Log.i(LOG_TAG, "Joining channel with channelId = $channelId")
 
-        PlayerManager.devices.clear()
+        PlayerManager.clear()
         connectedBroadcastChannel = channelId
         // Join the broadcast channel
         channelVizbeeX.connect(VizbeeXConnectionType.BROADCAST, channelId) { event, eventInfo ->
@@ -159,7 +171,6 @@ object VizbeeXWrapper {
         }
 
         Log.i(LOG_TAG, "Current members = ${channelVizbeeX.members}")
-        PlayerManager.addAll(channelVizbeeX.members)
     }
 
     private fun receiveMessagesWithBroadcast() {
@@ -188,8 +199,50 @@ object VizbeeXWrapper {
                     PlayerManager.updateScore(payload)
 //                    VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
                 }
+
+                VizbeeXMessageType.USER_JOINED.value -> {
+                    // Share the current TV players
+                    sendMessageWithBroadcast(JSONObject().apply {
+                        put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.CURRENT_USERS.value)
+                        put(VizbeeXMessageParameter.USERS.value, JSONArray().apply {
+                            for (player in PlayerManager.players.values) {
+                                put(player.getJsonWithoutScore())
+                            }
+                        })
+                    })
+                }
+
+                VizbeeXMessageType.CURRENT_USERS.value -> {
+                    // Received the current users
+                    Gson().fromJson(
+                        payload.optString(VizbeeXMessageParameter.USERS.value),
+                        Array<PlayerManager.Player>::class.java
+                    ).forEach {
+                        PlayerManager.players[it.userId] = it
+                    }
+                }
             }
         }
+    }
+
+    private fun sendMessageWithBroadcast(payload: JSONObject) {
+        Log.i(LOG_TAG, "send message with broadcast is invoked. payload = $payload")
+
+        sendMessage(channelVizbeeX, payload)
+    }
+
+    private fun sendMessage(vizbeeX: VizbeeX, payload: JSONObject) {
+        val message = VizbeeXMessage.create(payload)
+
+        vizbeeX.send(message, object : ICommandCallback<Unit> {
+            override fun onSuccess(success: Unit?) {
+                Log.i(LOG_TAG, "Message sent successfully")
+            }
+
+            override fun onFailure(error: VizbeeError?) {
+                Log.i(LOG_TAG, "Failed to send message: ${error?.message}")
+            }
+        })
     }
     // endregion
 

@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import tv.vizbee.movidletv.databinding.ItemWaitingForPlayersRecyclerViewBinding
-import tv.vizbee.screen.api.session.model.device.VizbeeDevice
+import tv.vizbee.movidletv.vizbee.PlayerManager
 
-class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<VizbeeDevice> = arrayListOf()) :
+class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<PlayerManager.Player> = arrayListOf()) :
     RecyclerView.Adapter<WaitingForPlayersRecyclerAdapter.PlayerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
@@ -16,21 +16,27 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<VizbeeDevi
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.bind("${players[position].deviceId} ${position + 1}")
+        holder.bind("${players[position].userName}")
     }
 
     override fun getItemCount(): Int = players.size
 
-    fun addPlayer(player: VizbeeDevice?) {
+    fun addPlayer(player: PlayerManager.Player?) {
         player?.let {
-            players.add(it)
-            notifyItemInserted(players.size - 1)
+            players.find { it.userId == player.userId }?.let {
+                // Do Nothing
+            } ?: kotlin.run {
+                players.add(it)
+                notifyItemInserted(players.size - 1)
+            }
         }
     }
 
-    fun remove(device: VizbeeDevice?) {
-        players.remove(device)
-        notifyDataSetChanged()
+    fun remove(deviceId: String?) {
+        players.find { it.userId == deviceId }?.let {
+            players.remove(it)
+            notifyDataSetChanged()
+        }
     }
 
     inner class PlayerViewHolder(private val binding: ItemWaitingForPlayersRecyclerViewBinding) :

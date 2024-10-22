@@ -45,12 +45,12 @@ class GameStatusActivity : BaseActivity() {
         } else {
             val clipSize = VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0
             if (clipSize != 0) {
-                sendGameStatus("clip_ended")
+                sendGameStatus("clip_ended", clipPosition - 1)
                 binding.gameStatusTitleText.text = "Movie 1 - Clip $clipPosition Ended"
                 binding.gameStatusDescriptionText.text = "Guess the movie name on your mobile"
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (clipPosition == clipSize) {
-                        sendGameStatus("movie_completed")
+                        sendGameStatus("movie_completed", clipPosition - 1)
                         navigateToGameScoreActivity()
                     } else {
                         playVideo()
@@ -74,19 +74,18 @@ class GameStatusActivity : BaseActivity() {
         }
     }
 
-    private fun sendGameStatus(status: String) {
+    private fun sendGameStatus(status: String, clipPosition: Int = this.clipPosition) {
+        val currentMovie = VideoStorage.getMovieClip(contentPosition, clipPosition)
         VizbeeXWrapper.sendMessageWithBiCast(JSONObject().apply {
             put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.GAME_STATUS.value)
             put(VizbeeXMessageParameter.STATUS.value, status)
             put(VizbeeXMessageParameter.MOVIE_NAME.value, VideoStorage.getMovie(contentPosition)?.name ?: "")
-            put(
-                VizbeeXMessageParameter.CLIP_ID.value,
-                VideoStorage.getMovieClip(contentPosition, clipPosition)?.id ?: ""
-            )
-            put(
-                VizbeeXMessageParameter.CLIP_SCORE.value,
-                VideoStorage.getMovieClip(contentPosition, clipPosition)?.score ?: "0"
-            )
+            if (status != "movie_completed") {
+                put(VizbeeXMessageParameter.CLIP_ID.value, currentMovie?.id ?: "")
+                put(VizbeeXMessageParameter.CLIP_SCORE.value, currentMovie?.score ?: "0")
+                put(VizbeeXMessageParameter.CLIP_NUMBER.value, "$clipPosition")
+                put(VizbeeXMessageParameter.TOTAL_CLIPS.value, VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0)
+            }
         })
     }
 

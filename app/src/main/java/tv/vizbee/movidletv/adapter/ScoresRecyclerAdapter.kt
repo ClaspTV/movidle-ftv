@@ -16,7 +16,7 @@ class ScoresRecyclerAdapter(val players: ArrayList<PlayerManager.Player> = array
     }
 
     override fun onBindViewHolder(holder: ScoresViewHolder, position: Int) {
-        holder.bind(players[position].score, position, players[position].username)
+        holder.bind(players[position].score, position, players[position].userName)
     }
 
     override fun getItemCount(): Int = players.size
@@ -25,7 +25,7 @@ class ScoresRecyclerAdapter(val players: ArrayList<PlayerManager.Player> = array
         RecyclerView.ViewHolder(binding.root) {
         fun bind(score: String, position: Int, username: String) {
             binding.itemScoreRankTextView.text = "${position + 1}."
-            binding.itemScorePlayerNameTextView.text = "Player ${username}"
+            binding.itemScorePlayerNameTextView.text = "${username}"
             binding.itemScoreScoreTextView.text = "$score"
         }
     }

@@ -9,9 +9,13 @@ enum class VizbeeXMessageParameter(val value: String) {
     MOVIES("movies"),
     CLIP_ID("clipId"),
     CLIP_SCORE("clipScore"),
+    CLIP_NUMBER("clipNumber"),
+    TOTAL_CLIPS("totalClips"),
 
     USER_ID("userId"),
     USER_NAME("userName"),
 
-    SCORE("score")
+    SCORE("score"),
+
+    USERS("users")
 }
