@@ -11,6 +11,7 @@ import tv.vizbee.movidletv.adapter.ScoresRecyclerAdapter
 import tv.vizbee.movidletv.databinding.ActivityGameScoreBinding
 import tv.vizbee.movidletv.model.VideoStorage
 import tv.vizbee.movidletv.vizbee.PlayerManager
+import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
 class GameScoreActivity : BaseActivity() {
     private lateinit var binding: ActivityGameScoreBinding
@@ -32,7 +33,7 @@ class GameScoreActivity : BaseActivity() {
 
         binding.scoresRecyclerView.apply {
             val finalPlayers = ArrayList(PlayerManager.players.values)
-            finalPlayers.sortByDescending { it.score }
+            finalPlayers.sortByDescending { it.score.toInt() }
             adapter = ScoresRecyclerAdapter(finalPlayers)
         }
 
@@ -40,7 +41,9 @@ class GameScoreActivity : BaseActivity() {
             if (VideoStorage.getMovie(intent.getIntExtra("contentPosition", 0) + 1) != null) {
                 finish()
             } else {
-                binding.gameScoreTitle.text = "All Movies Completed"
+                binding.gameScoreTitle.text = "Game Completed"
+                PlayerManager.clear()
+                VizbeeXWrapper.disconnect()
             }
         }, 30000)
     }

@@ -1,5 +1,6 @@
 package tv.vizbee.movidletv.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -22,10 +23,13 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<PlayerMana
     override fun getItemCount(): Int = players.size
 
     fun addPlayer(player: PlayerManager.Player?) {
+        Log.i("WaitingForPlayersRecyclerAdapter", "addPlayer invoked. player = $player")
         player?.let {
             players.find { it.userId == player.userId }?.let {
+                Log.i("WaitingForPlayersRecyclerAdapter", "Player already exists")
                 // Do Nothing
             } ?: kotlin.run {
+                Log.i("WaitingForPlayersRecyclerAdapter", "Adding new player")
                 players.add(it)
                 notifyItemInserted(players.size - 1)
             }

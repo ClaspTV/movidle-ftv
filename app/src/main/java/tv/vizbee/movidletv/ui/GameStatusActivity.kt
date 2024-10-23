@@ -46,7 +46,7 @@ class GameStatusActivity : BaseActivity() {
             val clipSize = VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0
             if (clipSize != 0) {
                 sendGameStatus("clip_ended", clipPosition - 1)
-                binding.gameStatusTitleText.text = "Movie 1 - Clip $clipPosition Ended"
+                binding.gameStatusTitleText.text = "Movie ${contentPosition + 1} - Clip $clipPosition Ended"
                 binding.gameStatusDescriptionText.text = "Guess the movie name on your mobile"
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (clipPosition == clipSize) {

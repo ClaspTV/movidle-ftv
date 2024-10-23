@@ -90,7 +90,7 @@ class WaitingForPlayersActivity : BaseActivity() {
     override fun onDeviceChangeAction(device: VizbeeDevice?) {
         super.onDeviceChangeAction(device)
 
-        Log.i("WaitingForPlayersActivity", "Device change event: Current Devices ${PlayerManager.players}")
+        Log.i("WaitingForPlayersActivity", "Device change event: Current Players ${PlayerManager.players.values}")
         PlayerManager.players.values.find { it.userId == device?.deviceId }?.let { player ->
             getAdapter()?.addPlayer(player)
         } ?: kotlin.run {

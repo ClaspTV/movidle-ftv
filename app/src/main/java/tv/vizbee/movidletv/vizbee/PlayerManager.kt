@@ -7,7 +7,7 @@ import tv.vizbee.screen.api.session.model.device.VizbeeDeviceType
 
 object PlayerManager {
     private val devices by lazy { arrayListOf<VizbeeDevice>() }
-    val players = HashMap<String, Player>()
+    val players by lazy { HashMap<String, Player>() }
 
     fun addDevice(device: VizbeeDevice?) {
         Log.i("PlayerManager", "Add Device invoked. device = ${device}")
@@ -43,14 +43,13 @@ object PlayerManager {
     }
 
     fun addPlayer(device: VizbeeDevice?, userId: String, userName: String) {
-        Log.i("PlayerManager", "addPlayer invoked. username = $userName, userId = $userId")
+        Log.i("PlayerManager", "addPlayer invoked. username = $userName, userId = $userId, device = $device")
 
         device?.let { actualDevice ->
-            if (actualDevice.deviceType == VizbeeDeviceType.ANDROID_MOBILE || actualDevice.deviceType == VizbeeDeviceType.IOS) {
-                devices.find { it.deviceId == actualDevice.deviceId } ?: kotlin.run {
-                    players[userId] = Player(userName, userId)
-                }
-            }
+//            if (actualDevice.deviceType == VizbeeDeviceType.ANDROID_MOBILE || actualDevice.deviceType == VizbeeDeviceType.IOS) {
+            players[userId] = Player(userName, userId)
+            Log.i("PlayerManager", "players = ${players.values}")
+//            }
         }
     }
 

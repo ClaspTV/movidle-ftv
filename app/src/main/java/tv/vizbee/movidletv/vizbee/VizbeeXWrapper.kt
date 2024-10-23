@@ -90,6 +90,12 @@ object VizbeeXWrapper {
             // Process the received message
             when (messageType) {
                 VizbeeXMessageType.JOIN_GAME.value -> {
+                    PlayerManager.addPlayer(
+                        sender,
+                        payload.optString(VizbeeXMessageParameter.USER_ID.value),
+                        payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+                    )
+
                     val channelId = payload.optString(VizbeeXMessageParameter.CHANNEL_ID.value)
                     // @ToDo: Review the logic
                     if (connectedBroadcastChannel != channelId) {
@@ -105,12 +111,6 @@ object VizbeeXWrapper {
                     } else {
                         sendUserJoined(payload)
                     }
-
-                    PlayerManager.addPlayer(
-                        sender,
-                        payload.optString(VizbeeXMessageParameter.USER_ID.value),
-                        payload.optString(VizbeeXMessageParameter.USER_NAME.value)
-                    )
                 }
             }
         }
@@ -135,7 +135,6 @@ object VizbeeXWrapper {
     private fun connectVizbeeXBroadcast(channelId: String, callback: () -> Unit) {
         Log.i(LOG_TAG, "Joining channel with channelId = $channelId")
 
-        PlayerManager.clear()
         connectedBroadcastChannel = channelId
         // Join the broadcast channel
         channelVizbeeX.connect(VizbeeXConnectionType.BROADCAST, channelId) { event, eventInfo ->
@@ -278,7 +277,8 @@ object VizbeeXWrapper {
     // endregion
 
     fun disconnect() {
-        vizbeeX.disconnect()
+        connectedBroadcastChannel = ""
+        movies.clear()
         channelVizbeeX.disconnect()
     }
 }
