@@ -78,10 +78,10 @@ dependencies {
 
     // Vizbee
 //    "firetvImplementation"("tv.vizbee:firetv-receiver-sdk:4.2.4")
-    "firetvImplementation"("tv.vizbee:firetv-receiver-sdk:4.2.5-rc7-x-messages")
+    "firetvImplementation"("tv.vizbee:firetv-receiver-sdk:4.2.5-rc9-x-messages")
     "androidtvImplementation"("tv.vizbee:androidtv-receiver-sdk:4.1.7")
     // X SDK
-    implementation("tv.vizbee:android-receiver-x-sdk:1.0.0-rc12")
+    implementation("tv.vizbee:android-receiver-x-sdk:1.0.0-rc13")
 
     // ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.19.1")
