@@ -15,7 +15,7 @@ object PlayerManager {
             if (actualDevice.deviceType == VizbeeDeviceType.ANDROID_MOBILE || actualDevice.deviceType == VizbeeDeviceType.IOS) {
                 devices.find { it.deviceId == actualDevice.deviceId } ?: kotlin.run {
                     devices.add(actualDevice)
-                    players.put(actualDevice.deviceId, Player(actualDevice.friendlyName, actualDevice.deviceId))
+//                    players.put(actualDevice.deviceId, Player(actualDevice.friendlyName, actualDevice.deviceId))
                 }
             }
         }

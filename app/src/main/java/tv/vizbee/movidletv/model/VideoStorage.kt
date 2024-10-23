@@ -5,7 +5,7 @@ import tv.vizbee.movidletv.model.movie.MovieItem
 import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
 object VideoStorage {
-    private val movieList = VizbeeXWrapper.movies
+    val movieList = VizbeeXWrapper.movies
 
     fun getMovie(contentPosition: Int): MovieItem? {
         if (contentPosition >= movieList.size) {

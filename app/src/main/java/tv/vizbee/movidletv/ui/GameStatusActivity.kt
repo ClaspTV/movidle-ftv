@@ -80,11 +80,16 @@ class GameStatusActivity : BaseActivity() {
             put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.GAME_STATUS.value)
             put(VizbeeXMessageParameter.STATUS.value, status)
             put(VizbeeXMessageParameter.MOVIE_NAME.value, VideoStorage.getMovie(contentPosition)?.name ?: "")
+            put(VizbeeXMessageParameter.MOVIE_NUMBER.value, contentPosition + 1)
+            put(VizbeeXMessageParameter.TOTAL_MOVIES.value, VideoStorage.movieList.size)
             if (status != "movie_completed") {
                 put(VizbeeXMessageParameter.CLIP_ID.value, currentMovie?.id ?: "")
                 put(VizbeeXMessageParameter.CLIP_SCORE.value, currentMovie?.score ?: "0")
-                put(VizbeeXMessageParameter.CLIP_NUMBER.value, "$clipPosition")
-                put(VizbeeXMessageParameter.TOTAL_CLIPS.value, VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0)
+                put(VizbeeXMessageParameter.CLIP_NUMBER.value, clipPosition + 1)
+                put(
+                    VizbeeXMessageParameter.TOTAL_CLIPS.value,
+                    VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0
+                )
             }
         })
     }

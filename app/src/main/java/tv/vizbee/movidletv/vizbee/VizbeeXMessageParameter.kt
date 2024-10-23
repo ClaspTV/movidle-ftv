@@ -6,6 +6,8 @@ enum class VizbeeXMessageParameter(val value: String) {
     STATUS("status"),
 
     MOVIE_NAME("movieName"),
+    MOVIE_NUMBER("movieNumber"),
+    TOTAL_MOVIES("totalMovies"),
     MOVIES("movies"),
     CLIP_ID("clipId"),
     CLIP_SCORE("clipScore"),

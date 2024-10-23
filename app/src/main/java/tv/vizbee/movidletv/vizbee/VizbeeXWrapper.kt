@@ -91,40 +91,48 @@ object VizbeeXWrapper {
             when (messageType) {
                 VizbeeXMessageType.JOIN_GAME.value -> {
                     val channelId = payload.optString(VizbeeXMessageParameter.CHANNEL_ID.value)
+                    // @ToDo: Review the logic
                     if (connectedBroadcastChannel != channelId) {
                         // 1. Join the broadcast channel
-                        connectVizbeeXBroadcast(channelId)
+                        connectVizbeeXBroadcast(channelId) {
+                            // When a user or player joins the game after connecting to TV, send a broadcast that the user
+                            // has joined
+                            sendUserJoined(payload)
+                        }
 
                         // 2. Start the waiting screen
                         VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
+                    } else {
+                        sendUserJoined(payload)
                     }
 
-                    PlayerManager.addPlayer(sender,
+                    PlayerManager.addPlayer(
+                        sender,
                         payload.optString(VizbeeXMessageParameter.USER_ID.value),
                         payload.optString(VizbeeXMessageParameter.USER_NAME.value)
                     )
-
-                    // When a user or player joins the game after connecting to TV, send a broadcast that the user
-                    // has joined
-                    sendMessageWithBroadcast(JSONObject().apply {
-                        put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.USER_JOINED.value)
-                        put(
-                            VizbeeXMessageParameter.USER_NAME.value,
-                            payload.optString(VizbeeXMessageParameter.USER_NAME.value)
-                        )
-                        put(
-                            VizbeeXMessageParameter.USER_ID.value,
-                            payload.optString(VizbeeXMessageParameter.USER_ID.value)
-                        )
-                    })
                 }
             }
         }
     }
+
+    private fun sendUserJoined(payload: JSONObject) {
+        sendMessageWithBroadcast(JSONObject().apply {
+            put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.USER_JOINED.value)
+            put(
+                VizbeeXMessageParameter.USER_NAME.value,
+                payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+            )
+            put(
+                VizbeeXMessageParameter.USER_ID.value,
+                payload.optString(VizbeeXMessageParameter.USER_ID.value)
+            )
+        })
+    }
     // endregion
 
     // region Vizbee X - Broadcast
-    private fun connectVizbeeXBroadcast(channelId: String) {
+    private fun connectVizbeeXBroadcast(channelId: String, callback: () -> Unit) {
         Log.i(LOG_TAG, "Joining channel with channelId = $channelId")
 
         PlayerManager.clear()
@@ -135,6 +143,7 @@ object VizbeeXWrapper {
                 VizbeeXConnectionEvent.READY -> {
                     Log.i(LOG_TAG, "channelVizbeeX is ready")
                     receiveMessagesWithBroadcast()
+                    callback.invoke()
                     // startGameplay()
                 }
 
