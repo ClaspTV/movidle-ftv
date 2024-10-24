@@ -7,6 +7,9 @@ import android.os.Looper
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.databinding.ActivityGameStatusBinding
@@ -48,14 +51,15 @@ class GameStatusActivity : BaseActivity() {
                 sendGameStatus("clip_ended", clipPosition - 1)
                 binding.gameStatusTitleText.text = "Movie ${contentPosition + 1} - Clip $clipPosition Ended"
                 binding.gameStatusDescriptionText.text = "Guess the movie name on your mobile"
-                Handler(Looper.getMainLooper()).postDelayed({
+                lifecycleScope.launch {
+                    delay(30000)
                     if (clipPosition == clipSize) {
                         sendGameStatus("movie_completed", clipPosition - 1)
                         navigateToGameScoreActivity()
                     } else {
                         playVideo()
                     }
-                }, 30000)
+                }
             }
         }
     }

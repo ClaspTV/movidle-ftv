@@ -22,4 +22,9 @@ object VideoStorage {
         }
         return clips?.get(clipPosition)
     }
+
+    fun updateMovies(movies: ArrayList<MovieItem>) {
+        movieList.clear()
+        movieList.addAll(movies)
+    }
 }

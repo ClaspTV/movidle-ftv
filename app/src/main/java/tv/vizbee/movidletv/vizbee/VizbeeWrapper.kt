@@ -74,5 +74,10 @@ object VizbeeWrapper {
         Log.i(LOG_TAG, appId)
         return appId
     }
+
+    fun clearVizbeeX() {
+        PlayerManager.clear()
+        VizbeeXWrapper.disconnect()
+    }
     // endregion
 }

@@ -99,14 +99,28 @@ object VizbeeXWrapper {
                     val channelId = payload.optString(VizbeeXMessageParameter.CHANNEL_ID.value)
                     // @ToDo: Review the logic
                     if (connectedBroadcastChannel != channelId) {
-                        // 1. Join the broadcast channel
+                        // 1. Disconnect if there is any active connection and reset the UI
+                        if (connectedBroadcastChannel != "") {
+                            disconnect()
+
+                            VizbeeXMessageListeners.triggerResetUIEvent(messageType)
+                        }
+
+                        PlayerManager.players.clear()
+                        PlayerManager.addPlayer(
+                            sender,
+                            payload.optString(VizbeeXMessageParameter.USER_ID.value),
+                            payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+                        )
+
+                        // 2. Join the broadcast channel
                         connectVizbeeXBroadcast(channelId) {
                             // When a user or player joins the game after connecting to TV, send a broadcast that the user
                             // has joined
                             sendUserJoined(payload)
                         }
 
-                        // 2. Start the waiting screen
+                        // 3. Start the waiting screen
                         VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
                     } else {
                         sendUserJoined(payload)
@@ -206,9 +220,17 @@ object VizbeeXWrapper {
                     // Save the score and update the UI
                     PlayerManager.updateScore(payload)
 //                    VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
+
+                    VizbeeXMessageListeners.triggerScoreUpdateEvent(payload)
                 }
 
                 VizbeeXMessageType.USER_JOINED.value -> {
+                    PlayerManager.addPlayer(
+                        sender,
+                        payload.optString(VizbeeXMessageParameter.USER_ID.value),
+                        payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+                    )
+
                     // Share the current TV players
                     sendMessageWithBroadcast(JSONObject().apply {
                         put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.CURRENT_USERS.value)
@@ -218,6 +240,8 @@ object VizbeeXWrapper {
                             }
                         })
                     })
+
+                    VizbeeXMessageListeners.triggerDeviceChange(sender)
                 }
 
                 VizbeeXMessageType.CURRENT_USERS.value -> {
@@ -226,8 +250,10 @@ object VizbeeXWrapper {
                         payload.optString(VizbeeXMessageParameter.USERS.value),
                         Array<PlayerManager.Player>::class.java
                     ).forEach {
-                        PlayerManager.players[it.userId] = it
+                        PlayerManager.players[it.userId] = PlayerManager.Player(it.userName, it.userId)
                     }
+
+                    VizbeeXMessageListeners.triggerDeviceChange(sender)
                 }
             }
         }

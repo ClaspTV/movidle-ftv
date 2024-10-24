@@ -31,23 +31,24 @@ class WaitingForPlayersActivity : BaseActivity() {
             insets
         }
 
-        binding.root.setOnClickListener {
-            if (getAdapterCount() == 5) {
-                startTheGame()
-            } else {
-                addPlayer(
-                    PlayerManager.Player(
-                        userId = getAdapter()?.itemCount.toString(),
-                        userName = "${System.currentTimeMillis()}"
-                    )
-                )
-            }
-        }
+//        binding.root.setOnClickListener {
+//            if (getAdapterCount() == 5) {
+//                startTheGame()
+//            } else {
+//                addPlayer(
+//                    PlayerManager.Player(
+//                        userId = getAdapter()?.itemCount.toString(),
+//                        userName = "${System.currentTimeMillis()}"
+//                    )
+//                )
+//            }
+//        }
 
         setupRecyclerView()
     }
 
     private fun startTheGame() {
+        Log.i("WaitingForPlayersActivity", "Starting the game")
         Intent(this, GameStatusActivity::class.java).apply {
             putExtra("contentPosition", 0)
         }.also {
@@ -95,6 +96,15 @@ class WaitingForPlayersActivity : BaseActivity() {
             getAdapter()?.addPlayer(player)
         } ?: kotlin.run {
             getAdapter()?.remove(device?.deviceId)
+        }
+
+        val adapterPlayers = getAdapter()?.getAll()
+        PlayerManager.players.values.forEach { player ->
+            adapterPlayers?.find { it.userId == player.userId }?.let { player ->
+                // Do Nothing
+            } ?: kotlin.run {
+                getAdapter()?.addPlayer(player)
+            }
         }
     }
 }

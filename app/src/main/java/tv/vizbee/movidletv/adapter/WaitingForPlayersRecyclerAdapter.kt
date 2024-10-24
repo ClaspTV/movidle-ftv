@@ -43,6 +43,10 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<PlayerMana
         }
     }
 
+    fun getAll(): ArrayList<PlayerManager.Player> {
+        return players
+    }
+
     inner class PlayerViewHolder(private val binding: ItemWaitingForPlayersRecyclerViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(playerName: String) {
