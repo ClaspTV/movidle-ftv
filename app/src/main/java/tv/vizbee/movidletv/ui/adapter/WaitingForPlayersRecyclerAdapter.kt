@@ -1,13 +1,13 @@
-package tv.vizbee.movidletv.adapter
+package tv.vizbee.movidletv.ui.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import tv.vizbee.movidletv.databinding.ItemWaitingForPlayersRecyclerViewBinding
-import tv.vizbee.movidletv.vizbee.PlayerManager
+import tv.vizbee.movidletv.data.model.Player
 
-class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<PlayerManager.Player> = arrayListOf()) :
+class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<Player> = arrayListOf()) :
     RecyclerView.Adapter<WaitingForPlayersRecyclerAdapter.PlayerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
@@ -22,7 +22,7 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<PlayerMana
 
     override fun getItemCount(): Int = players.size
 
-    fun addPlayer(player: PlayerManager.Player?) {
+    fun addPlayer(player: Player?) {
         Log.i("WaitingForPlayersRecyclerAdapter", "addPlayer invoked. player = $player")
         player?.let {
             players.find { it.userId == player.userId }?.let {
@@ -43,8 +43,16 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<PlayerMana
         }
     }
 
-    fun getAll(): ArrayList<PlayerManager.Player> {
+    fun getAll(): ArrayList<Player> {
         return players
+    }
+
+    fun updateAll(players: List<Player>?) {
+        players?.let {
+            this.players.clear()
+            this.players.addAll(players)
+            notifyDataSetChanged()
+        }
     }
 
     inner class PlayerViewHolder(private val binding: ItemWaitingForPlayersRecyclerViewBinding) :

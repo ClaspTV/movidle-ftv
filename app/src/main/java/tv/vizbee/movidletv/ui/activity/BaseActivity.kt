@@ -1,8 +1,7 @@
-package tv.vizbee.movidletv.ui
+package tv.vizbee.movidletv.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -16,7 +15,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     val startObserver = Observer<Pair<String, JSONObject>?> { pair ->
         pair?.let {
-            VizbeeXMessageListeners.resetStartAction()
+//            VizbeeXMessageListeners.resetStartAction()
 
             Log.i(LOG_TAG, "Received startActivity event. class = ${this::class.java.simpleName}")
             onStartActivityAction(pair.first, pair.second)
@@ -25,7 +24,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     val deviceChangeObserver = Observer<VizbeeDevice?> { device ->
         device?.let {
-            VizbeeXMessageListeners.resetDeviceAction()
+//            VizbeeXMessageListeners.resetDeviceAction()
 
             Log.i(LOG_TAG, "Received device change event. class = ${this::class.java.simpleName}")
             onDeviceChangeAction(device)
@@ -34,7 +33,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     val resetUIObserver = Observer<String?> { messageType ->
         messageType?.let {
-            VizbeeXMessageListeners.resetResetUIAction()
+//            VizbeeXMessageListeners.resetResetUIAction()
 
             Log.i(LOG_TAG, "Received reset UI event.  class = ${this::class.java.simpleName}")
             onResetUIAction(messageType)
@@ -43,7 +42,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     val scoreUpdateObserver = Observer<JSONObject?> { payload ->
         payload?.let {
-            VizbeeXMessageListeners.resetScoreUpdateAction()
+//            VizbeeXMessageListeners.resetScoreUpdateAction()
 
             Log.i(LOG_TAG, "Received score update event. class = ${this::class.java.simpleName}")
             onScoreUpdate(payload)
@@ -63,14 +62,14 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun removeObservers() {
-        VizbeeXMessageListeners.getStartActivityEvent().removeObservers(this)
+//        VizbeeXMessageListeners.getStartActivityEvent().removeObservers(this)
     }
 
     private fun addObservers() {
-        VizbeeXMessageListeners.getStartActivityEvent().observe(this, startObserver)
-        VizbeeXMessageListeners.getDeviceChangeEvent().observe(this, deviceChangeObserver)
-        VizbeeXMessageListeners.getResetUIEvent().observe(this, resetUIObserver)
-        VizbeeXMessageListeners.getScoreUpdateEvent().observe(this, scoreUpdateObserver)
+//        VizbeeXMessageListeners.getStartActivityEvent().observe(this, startObserver)
+//        VizbeeXMessageListeners.getDeviceChangeEvent().observe(this, deviceChangeObserver)
+//        VizbeeXMessageListeners.getResetUIEvent().observe(this, resetUIObserver)
+//        VizbeeXMessageListeners.getScoreUpdateEvent().observe(this, scoreUpdateObserver)
     }
 
     open fun onDeviceChangeAction(device: VizbeeDevice?) {
@@ -83,11 +82,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun onResetUIAction(messageType: String) {
         if (messageType == VizbeeXMessageType.JOIN_GAME.value) {
-            Intent(this, WaitingForPlayersActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }.also {
-                startActivity(it)
-            }
+//            Intent(this, WaitingForPlayersActivity::class.java).apply {
+//                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            }.also {
+//                startActivity(it)
+//            }
         }
     }
 

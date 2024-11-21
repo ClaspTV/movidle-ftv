@@ -1,4 +1,4 @@
-package tv.vizbee.movidletv.ui
+package tv.vizbee.movidletv.ui.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -20,7 +20,6 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.LoadControl
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Renderer.MessageType
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.ExtractorsFactory
@@ -31,13 +30,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import org.json.JSONObject
 import tv.vizbee.movidletv.R
 import tv.vizbee.movidletv.databinding.ActivityPlayerBinding
 import tv.vizbee.movidletv.utils.ExoplayerUtils
-import tv.vizbee.movidletv.vizbee.VizbeeXMessageParameter
-import tv.vizbee.movidletv.vizbee.VizbeeXMessageType
-import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
 class PlayerActivity : BaseActivity(), MediaSourceEventListener, Player.Listener {
     private lateinit var binding: ActivityPlayerBinding

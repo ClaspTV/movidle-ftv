@@ -2,15 +2,33 @@ package tv.vizbee.movidletv.vizbee
 
 import android.util.Log
 import org.json.JSONObject
+import tv.vizbee.movidletv.data.model.Player
+import tv.vizbee.movidletv.ui.viewmodel.PlayerViewModel
+import tv.vizbee.movidletv.ui.viewmodel.ScoreViewModel
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 import tv.vizbee.screen.api.session.model.device.VizbeeDeviceType
 
 object PlayerManager {
+    const val LOG_TAG = "PlayerManager"
+
+    private var playerViewModel: PlayerViewModel? = null
+    private var scoreViewModel: ScoreViewModel? = null
+
     private val devices by lazy { arrayListOf<VizbeeDevice>() }
-    val players by lazy { HashMap<String, Player>() }
+    val _players by lazy { HashMap<String, Player>() }
+
+    fun getPlayers(playerViewModel: PlayerViewModel) {
+        this.playerViewModel = playerViewModel
+        this.playerViewModel?.updatePlayers(ArrayList(this._players.values))
+    }
+
+    fun getScores(scoreViewModel: ScoreViewModel) {
+        this.scoreViewModel = scoreViewModel
+        this.scoreViewModel?.updateScores(this._players)
+    }
 
     fun addDevice(device: VizbeeDevice?) {
-        Log.i("PlayerManager", "Add Device invoked. device = ${device}")
+        Log.i(LOG_TAG, "Add Device invoked. device = ${device}")
         device?.let { actualDevice ->
             if (actualDevice.deviceType == VizbeeDeviceType.ANDROID_MOBILE || actualDevice.deviceType == VizbeeDeviceType.IOS) {
                 devices.find { it.deviceId == actualDevice.deviceId } ?: kotlin.run {
@@ -26,19 +44,21 @@ object PlayerManager {
         device?.let { actualDevice ->
             devices.find { it.deviceId == actualDevice.deviceId }?.let {
                 devices.remove(it)
-                players.remove(actualDevice.deviceId)
+                _players.remove(actualDevice.deviceId)
+                this.playerViewModel?.removePlayer(actualDevice.deviceId)
             }
         }
     }
 
     fun updateScore(payload: JSONObject) {
         val userId = payload.optString(VizbeeXMessageParameter.USER_ID.value)
-        players[userId]?.let {
+        _players[userId]?.let {
             it.score = payload.optString(VizbeeXMessageParameter.SCORE.value)
             payload.optString(VizbeeXMessageParameter.USER_NAME.value)?.let { name ->
                 it.userName = name
             }
-            players[userId] = it
+            _players[userId] = it
+            this.scoreViewModel?.updateScore(userId, it.toString())
         }
     }
 
@@ -47,31 +67,17 @@ object PlayerManager {
 
         device?.let { actualDevice ->
 //            if (actualDevice.deviceType == VizbeeDeviceType.ANDROID_MOBILE || actualDevice.deviceType == VizbeeDeviceType.IOS) {
-            players[userId] = Player(userName, userId)
-            Log.i("PlayerManager", "players = ${players.values}")
+            val player = Player(userName, userId)
+            _players[userId] = player
+            this.playerViewModel?.addPlayer(player)
+            Log.i("PlayerManager", "players = ${_players.values}")
 //            }
         }
     }
 
     fun clear() {
         devices.clear()
-        players.clear()
-    }
-
-    data class Player(var userName: String, val userId: String, var score: String = "0") {
-        fun getJson(): JSONObject {
-            return JSONObject().apply {
-                put(VizbeeXMessageParameter.USER_ID.value, userId)
-                put(VizbeeXMessageParameter.USER_NAME.value, userName)
-                put(VizbeeXMessageParameter.SCORE.value, score)
-            }
-        }
-
-        fun getJsonWithoutScore(): JSONObject {
-            return JSONObject().apply {
-                put(VizbeeXMessageParameter.USER_ID.value, userId)
-                put(VizbeeXMessageParameter.USER_NAME.value, userName)
-            }
-        }
+        _players.clear()
+        this.playerViewModel?.updatePlayers(ArrayList(this._players.values))
     }
 }

@@ -1,7 +1,7 @@
-package tv.vizbee.movidletv.model
+package tv.vizbee.movidletv.data.model
 
-import tv.vizbee.movidletv.model.movie.MovieCLipItem
-import tv.vizbee.movidletv.model.movie.MovieItem
+import tv.vizbee.movidletv.data.model.movie.MovieCLipItem
+import tv.vizbee.movidletv.data.model.movie.MovieItem
 import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
 object VideoStorage {

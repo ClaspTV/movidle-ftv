@@ -3,9 +3,14 @@ package tv.vizbee.movidletv.vizbee
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
-import tv.vizbee.movidletv.model.movie.MovieItem
+import tv.vizbee.movidletv.data.model.AppState
+import tv.vizbee.movidletv.data.model.Player
+import tv.vizbee.movidletv.data.model.movie.MovieItem
 import tv.vizbee.screen.api.session.model.device.VizbeeDevice
 import tv.vizbee.screen.x.api.VizbeeX
 import tv.vizbee.screen.x.api.model.event.VizbeeXConnectionEvent
@@ -29,44 +34,48 @@ object VizbeeXWrapper {
 
         // Initialise X SDK
         vizbeeX.connect(VizbeeXConnectionType.BICAST, "tv.vizbee.movidle") { event, eventInfo ->
-            when (event) {
-                VizbeeXConnectionEvent.READY -> {
-                    Log.i(LOG_TAG, "VizbeeX is ready")
-                    receiveMessageWithBiCast()
-                }
-
-                VizbeeXConnectionEvent.NOT_READY -> {
-                    Log.i(LOG_TAG, "VizbeeX is not ready")
-                }
-
-                VizbeeXConnectionEvent.ERROR -> {
-                    // Handle error state
-                    val error = eventInfo.error
-                    Log.i(LOG_TAG, "Error occurred = ${error?.message}")
-                }
-
-                VizbeeXConnectionEvent.DEVICE_CONNECTED -> {
-                    // Handle device connected
-                    // Save the device and update the UI with device joining
-                    val device = eventInfo.device
-                    Log.i(LOG_TAG, "Device connected: ${device?.friendlyName}")
-
-                    device?.let { VizbeeXMessageListeners.triggerDeviceChange(it) }
-                    if (connectedBroadcastChannel.isNotEmpty()) {
-                        sendMessageWithBiCast(JSONObject().apply {
-                            put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.JOIN_GAME.value)
-                            put(VizbeeXMessageParameter.CHANNEL_ID.value, connectedBroadcastChannel)
-                        })
+            CoroutineScope(Dispatchers.Main).launch {
+                when (event) {
+                    VizbeeXConnectionEvent.READY -> {
+                        Log.i(LOG_TAG, "VizbeeX is ready")
+                        receiveMessageWithBiCast()
                     }
-                }
 
-                VizbeeXConnectionEvent.DEVICE_DISCONNECTED -> {
-                    // Handle device disconnected
-                    // Remove the device and update the UI with device removal
-                    val device = eventInfo.device
-                    Log.i(LOG_TAG, "Device disconnected: ${device?.friendlyName}")
+                    VizbeeXConnectionEvent.NOT_READY -> {
+                        Log.i(LOG_TAG, "VizbeeX is not ready")
+                    }
 
-                    device?.let { VizbeeXMessageListeners.triggerDeviceChange(it) }
+                    VizbeeXConnectionEvent.ERROR -> {
+                        // Handle error state
+                        val error = eventInfo.error
+                        Log.i(LOG_TAG, "Error occurred = ${error?.message}")
+                    }
+
+                    VizbeeXConnectionEvent.DEVICE_CONNECTED -> {
+                        // Handle device connected
+                        // Save the device and update the UI with device joining
+                        val device = eventInfo.device
+                        Log.i(LOG_TAG, "Device connected: ${device?.friendlyName}")
+
+                        AppStateManager.updateState(AppState.Connected)
+//                    device?.let { VizbeeXMessageListeners.triggerDeviceChange(it) }
+                        if (connectedBroadcastChannel.isNotEmpty()) {
+                            sendMessageWithBiCast(JSONObject().apply {
+                                put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.JOIN_GAME.value)
+                                put(VizbeeXMessageParameter.CHANNEL_ID.value, connectedBroadcastChannel)
+                            })
+                        }
+                    }
+
+                    VizbeeXConnectionEvent.DEVICE_DISCONNECTED -> {
+                        // Handle device disconnected
+                        // Remove the device and update the UI with device removal
+                        val device = eventInfo.device
+                        Log.i(LOG_TAG, "Device disconnected: ${device?.friendlyName}")
+
+                        AppStateManager.updateState(AppState.NotConnected)
+//                    device?.let { VizbeeXMessageListeners.triggerDeviceChange(it) }
+                    }
                 }
             }
         }
@@ -88,44 +97,49 @@ object VizbeeXWrapper {
             Log.i(LOG_TAG, "BiCast: Received message with payload = $payload")
 
             // Process the received message
-            when (messageType) {
-                VizbeeXMessageType.JOIN_GAME.value -> {
-                    PlayerManager.addPlayer(
-                        sender,
-                        payload.optString(VizbeeXMessageParameter.USER_ID.value),
-                        payload.optString(VizbeeXMessageParameter.USER_NAME.value)
-                    )
-
-                    val channelId = payload.optString(VizbeeXMessageParameter.CHANNEL_ID.value)
-                    // @ToDo: Review the logic
-                    if (connectedBroadcastChannel != channelId) {
-                        // 1. Disconnect if there is any active connection and reset the UI
-                        if (connectedBroadcastChannel != "") {
-                            disconnect()
-
-                            VizbeeXMessageListeners.triggerResetUIEvent(messageType)
-                        }
-
-                        PlayerManager.players.clear()
+            CoroutineScope(Dispatchers.Main).launch {
+                when (messageType) {
+                    VizbeeXMessageType.JOIN_GAME.value -> {
                         PlayerManager.addPlayer(
                             sender,
                             payload.optString(VizbeeXMessageParameter.USER_ID.value),
                             payload.optString(VizbeeXMessageParameter.USER_NAME.value)
                         )
 
-                        // 2. Join the broadcast channel
-                        connectVizbeeXBroadcast(channelId) {
-                            // When a user or player joins the game after connecting to TV, send a broadcast that the user
-                            // has joined
+                        val channelId = payload.optString(VizbeeXMessageParameter.CHANNEL_ID.value)
+                        // @ToDo: Review the logic
+                        if (connectedBroadcastChannel != channelId) {
+                            // 1. Disconnect if there is any active connection and reset the UI
+                            if (connectedBroadcastChannel != "") {
+                                disconnect()
+
+                                AppStateManager.updateState(AppState.WaitingForPlayers)
+//                            VizbeeXMessageListeners.triggerResetUIEvent(messageType)
+                            }
+
+                            PlayerManager._players.clear()
+                            PlayerManager.addPlayer(
+                                sender,
+                                payload.optString(VizbeeXMessageParameter.USER_ID.value),
+                                payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+                            )
+
+                            // 2. Join the broadcast channel
+                            connectVizbeeXBroadcast(channelId) {
+                                // When a user or player joins the game after connecting to TV, send a broadcast that the user
+                                // has joined
+                                sendUserJoined(payload)
+                            }
+
+                            // 3. Start the waiting screen
+                            AppStateManager.updateState(AppState.WaitingForPlayers)
+//                        VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
+                        } else {
                             sendUserJoined(payload)
                         }
-
-                        // 3. Start the waiting screen
-                        VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
-                    } else {
-                        sendUserJoined(payload)
                     }
                 }
+
             }
         }
     }
@@ -152,43 +166,46 @@ object VizbeeXWrapper {
         connectedBroadcastChannel = channelId
         // Join the broadcast channel
         channelVizbeeX.connect(VizbeeXConnectionType.BROADCAST, channelId) { event, eventInfo ->
-            when (event) {
-                VizbeeXConnectionEvent.READY -> {
-                    Log.i(LOG_TAG, "channelVizbeeX is ready")
-                    receiveMessagesWithBroadcast()
-                    callback.invoke()
-                    // startGameplay()
+            CoroutineScope(Dispatchers.Main).launch {
+                when (event) {
+                    VizbeeXConnectionEvent.READY -> {
+                        Log.i(LOG_TAG, "channelVizbeeX is ready")
+                        receiveMessagesWithBroadcast()
+                        callback.invoke()
+                        // startGameplay()
+                    }
+
+                    VizbeeXConnectionEvent.NOT_READY -> {
+                        Log.i(LOG_TAG, "channelVizbeeX is not ready")
+                    }
+
+                    VizbeeXConnectionEvent.ERROR -> {
+                        val error = eventInfo.error
+                        Log.i(LOG_TAG, "channelVizbeeX: Error occurred = ${error?.message}")
+                    }
+
+                    VizbeeXConnectionEvent.DEVICE_CONNECTED -> {
+                        // Handle device connected
+                        // Save the device and update the UI with device joining
+                        val device = eventInfo.device
+                        Log.i(LOG_TAG, "channelVizbeeX: Device connected: ${device?.friendlyName}")
+
+                        saveDevice(device)
+                    }
+
+                    VizbeeXConnectionEvent.DEVICE_DISCONNECTED -> {
+                        // Handle device disconnected
+                        // Remove the device and update the UI with device removal
+                        val device = eventInfo.device
+                        Log.i(LOG_TAG, "channelVizbeeX: Device disconnected: ${device?.friendlyName}")
+
+                        removeDevice(device)
+                    }
+
+                    else -> { /* Handle other events */
+                    }
                 }
 
-                VizbeeXConnectionEvent.NOT_READY -> {
-                    Log.i(LOG_TAG, "channelVizbeeX is not ready")
-                }
-
-                VizbeeXConnectionEvent.ERROR -> {
-                    val error = eventInfo.error
-                    Log.i(LOG_TAG, "channelVizbeeX: Error occurred = ${error?.message}")
-                }
-
-                VizbeeXConnectionEvent.DEVICE_CONNECTED -> {
-                    // Handle device connected
-                    // Save the device and update the UI with device joining
-                    val device = eventInfo.device
-                    Log.i(LOG_TAG, "channelVizbeeX: Device connected: ${device?.friendlyName}")
-
-                    saveDevice(device)
-                }
-
-                VizbeeXConnectionEvent.DEVICE_DISCONNECTED -> {
-                    // Handle device disconnected
-                    // Remove the device and update the UI with device removal
-                    val device = eventInfo.device
-                    Log.i(LOG_TAG, "channelVizbeeX: Device disconnected: ${device?.friendlyName}")
-
-                    removeDevice(device)
-                }
-
-                else -> { /* Handle other events */
-                }
             }
         }
 
@@ -204,57 +221,61 @@ object VizbeeXWrapper {
             val messageType = payload.optString(VizbeeXMessageParameter.MESSAGE_TYPE.value)
             Log.i(LOG_TAG, "Broadcast: Received message with payload = $payload")
 
-            when (messageType) {
-                VizbeeXMessageType.START_GAME.value -> {
-                    // 1. Save the Movies Data
-                    payload.optJSONArray(VizbeeXMessageParameter.MOVIES.value)?.let {
-                        movies.addAll(jsonArrayToArrayList(it))
+            CoroutineScope(Dispatchers.Main).launch {
+                when (messageType) {
+                    VizbeeXMessageType.START_GAME.value -> {
+                        // 1. Save the Movies Data
+                        payload.optJSONArray(VizbeeXMessageParameter.MOVIES.value)?.let {
+                            movies.addAll(jsonArrayToArrayList(it))
+                        }
+
+                        // 2. Start the game
+                        AppStateManager.updateState(AppState.GameStarted)
+//                    VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
                     }
 
-                    // 2. Start the game
-                    VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
-                }
-
-                VizbeeXMessageType.SCORE_UPDATE.value -> {
-                    // Received the score update
-                    // Save the score and update the UI
-                    PlayerManager.updateScore(payload)
+                    VizbeeXMessageType.SCORE_UPDATE.value -> {
+                        // Received the score update
+                        // Save the score and update the UI
+                        PlayerManager.updateScore(payload)
 //                    VizbeeXMessageListeners.triggerStartActivity(messageType, payload)
 
-                    VizbeeXMessageListeners.triggerScoreUpdateEvent(payload)
-                }
-
-                VizbeeXMessageType.USER_JOINED.value -> {
-                    PlayerManager.addPlayer(
-                        sender,
-                        payload.optString(VizbeeXMessageParameter.USER_ID.value),
-                        payload.optString(VizbeeXMessageParameter.USER_NAME.value)
-                    )
-
-                    // Share the current TV players
-                    sendMessageWithBroadcast(JSONObject().apply {
-                        put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.CURRENT_USERS.value)
-                        put(VizbeeXMessageParameter.USERS.value, JSONArray().apply {
-                            for (player in PlayerManager.players.values) {
-                                put(player.getJsonWithoutScore())
-                            }
-                        })
-                    })
-
-                    VizbeeXMessageListeners.triggerDeviceChange(sender)
-                }
-
-                VizbeeXMessageType.CURRENT_USERS.value -> {
-                    // Received the current users
-                    Gson().fromJson(
-                        payload.optString(VizbeeXMessageParameter.USERS.value),
-                        Array<PlayerManager.Player>::class.java
-                    ).forEach {
-                        PlayerManager.players[it.userId] = PlayerManager.Player(it.userName, it.userId)
+//                    VizbeeXMessageListeners.triggerScoreUpdateEvent(payload)
                     }
 
-                    VizbeeXMessageListeners.triggerDeviceChange(sender)
+                    VizbeeXMessageType.USER_JOINED.value -> {
+                        PlayerManager.addPlayer(
+                            sender,
+                            payload.optString(VizbeeXMessageParameter.USER_ID.value),
+                            payload.optString(VizbeeXMessageParameter.USER_NAME.value)
+                        )
+
+                        // Share the current TV players
+                        sendMessageWithBroadcast(JSONObject().apply {
+                            put(VizbeeXMessageParameter.MESSAGE_TYPE.value, VizbeeXMessageType.CURRENT_USERS.value)
+                            put(VizbeeXMessageParameter.USERS.value, JSONArray().apply {
+                                for (player in PlayerManager._players.values) {
+                                    put(player.getJsonWithoutScore())
+                                }
+                            })
+                        })
+
+//                    VizbeeXMessageListeners.triggerDeviceChange(sender)
+                    }
+
+                    VizbeeXMessageType.CURRENT_USERS.value -> {
+                        // Received the current users
+                        Gson().fromJson(
+                            payload.optString(VizbeeXMessageParameter.USERS.value),
+                            Array<Player>::class.java
+                        ).forEach {
+                            PlayerManager._players[it.userId] = Player(it.userName, it.userId)
+                        }
+
+//                    VizbeeXMessageListeners.triggerDeviceChange(sender)
+                    }
                 }
+
             }
         }
     }
@@ -285,14 +306,14 @@ object VizbeeXWrapper {
         // Save the connected device and update the UI with device joining
         Log.i(LOG_TAG, "Save device is invoked")
         PlayerManager.addDevice(device)
-        device?.let { VizbeeXMessageListeners.triggerDeviceChange(it) }
+//        device?.let { VizbeeXMessageListeners.triggerDeviceChange(it) }
     }
 
     private fun removeDevice(device: VizbeeDevice?) {
         // Remove the disconnected device and update the UI with device removal
         Log.i(LOG_TAG, "Remove device is invoked")
         PlayerManager.removeDevice(device)
-        device?.let { VizbeeXMessageListeners.triggerDeviceChange(device) }
+//        device?.let { VizbeeXMessageListeners.triggerDeviceChange(device) }
     }
 
     private fun jsonArrayToArrayList(jsonArray: JSONArray): ArrayList<MovieItem> {

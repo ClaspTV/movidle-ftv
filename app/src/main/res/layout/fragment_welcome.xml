@@ -2,11 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/app_bg"
-    tools:context=".ui.SplashActivity">
+    tools:context=".ui.fragment.WelcomeFragment">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,20 +20,21 @@
 
         <ImageView
             android:id="@+id/appLogo"
-            style="@style/AppLogoStyle" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="App Logo"
+            android:src="@drawable/app_logo" />
 
         <TextView
             android:id="@+id/welcomeText"
             style="@style/TitleTextViewStyle"
             android:layout_marginTop="48dp"
-            android:text="Movidle"
-            android:textSize="48sp" />
+            android:text="Welcome To Movidle!" />
 
         <TextView
             android:id="@+id/instructionText"
             style="@style/DescriptionTextViewStyle"
             android:layout_marginTop="16dp"
-            android:text="The ultimate challenge for\nmovie buffs!" />
-
+            android:text="Start the game by connecting your\nmobile to this TV." />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

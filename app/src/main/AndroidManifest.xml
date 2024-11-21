@@ -28,22 +28,7 @@
             android:resource="@xml/whisperplay" />
 
         <activity
-            android:name=".ui.GameScoreActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.GameStatusActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.PlayerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.WaitingForPlayersActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.BaseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.SplashActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,13 +40,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.WelcomeActivity"
+            android:name=".ui.activity.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.StartGameActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.StartGameCountDownActivity"
+            android:name=".ui.activity.BaseActivity"
             android:exported="false" />
     </application>
 

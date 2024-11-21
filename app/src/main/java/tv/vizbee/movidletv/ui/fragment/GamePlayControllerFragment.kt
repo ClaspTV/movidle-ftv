@@ -1,47 +1,58 @@
-package tv.vizbee.movidletv.ui
+package tv.vizbee.movidletv.ui.fragment
 
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import androidx.activity.enableEdgeToEdge
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import tv.vizbee.movidletv.R
-import tv.vizbee.movidletv.databinding.ActivityGameStatusBinding
-import tv.vizbee.movidletv.model.VideoStorage
+import tv.vizbee.movidletv.databinding.FragmentGamePlayControllerBinding
+import tv.vizbee.movidletv.data.model.VideoStorage
 import tv.vizbee.movidletv.vizbee.VizbeeXMessageParameter
 import tv.vizbee.movidletv.vizbee.VizbeeXMessageType
 import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 
-class GameStatusActivity : BaseActivity() {
-    private lateinit var binding: ActivityGameStatusBinding
+class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBinding>() {
     private var contentPosition: Int = 0
     private var clipPosition: Int = 0
+    private val args: GamePlayControllerFragmentArgs by navArgs()
+
+    override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentGamePlayControllerBinding {
+        return FragmentGamePlayControllerBinding.inflate(inflater, container, false)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        Log.i(LOG_TAG, "OnCreate invoked")
+    }
 
-        binding = ActivityGameStatusBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Log.i(LOG_TAG, "OnCreateView invoked")
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
 
-        contentPosition = getContentPosition()
-        clipPosition = getClipPosition()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.i(LOG_TAG, "onAttach invoked")
+    }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.i(LOG_TAG, "OnViewCreated invoked")
+
+        contentPosition = args.contentPosition
+        clipPosition = args.clipPosition
     }
 
     override fun onResume() {
         super.onResume()
+        Log.i(LOG_TAG, "OnResume invoked")
 
         if (clipPosition == 0) {
             playVideo()
@@ -64,18 +75,14 @@ class GameStatusActivity : BaseActivity() {
         }
     }
 
-    private fun navigateToGameScoreActivity() {
-        Intent(this, GameScoreActivity::class.java).apply {
-            putExtra("contentPosition", contentPosition)
-            putExtra("clipPosition", clipPosition)
-        }.also {
-            contentPosition++
-            clipPosition = 0
-            startActivity(it)
-        }
-        if (VideoStorage.getMovie(contentPosition) == null) {
-            finish()
-        }
+    private fun navigateToGameScoreActivity(forMovie: Boolean = true) {
+        val action = GamePlayControllerFragmentDirections.actionGamePlayControllerFragmentToScoresFragnent(contentPosition, clipPosition, forMovie)
+        contentPosition++
+        clipPosition = 0
+//        if (VideoStorage.getMovie(contentPosition) == null) {
+//            findNavController().popBackStack()
+//        }
+        findNavController().navigate(action)
     }
 
     private fun sendGameStatus(status: String, clipPosition: Int = this.clipPosition) {
@@ -103,11 +110,9 @@ class GameStatusActivity : BaseActivity() {
             sendGameStatus("clip_started")
 
             clipPosition++
-            Intent(this, PlayerActivity::class.java).apply {
-                putExtra("videoUrl", videoUrl)
-            }.also {
-                startActivity(it)
-            }
+            val action = GamePlayControllerFragmentDirections.actionGamePlayControllerFragmentToPlayerActivity(videoUrl)
+            findNavController().navigate(action)
+
 //        } ?: kotlin.run {
 //            contentPosition++
 //            navigate(this, GameScoreActivity::class.java)
@@ -115,16 +120,31 @@ class GameStatusActivity : BaseActivity() {
 //                playVideo()
 //            } ?: kotlin.run {
 //                // No Videos or clips to play
-//
 //            }
         }
     }
 
-    private fun getContentPosition(): Int {
-        return intent.getIntExtra("contentPosition", 0)
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(LOG_TAG, "onDestroy invoked")
     }
 
-    private fun getClipPosition(): Int {
-        return intent.getIntExtra("clipPosition", 0)
+    override fun onDetach() {
+        super.onDetach()
+        Log.i(LOG_TAG, "onDetach invoked")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i(LOG_TAG, "onPause invoked")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i(LOG_TAG, "onStop invoked")
+    }
+
+    companion object{
+        private const val LOG_TAG = "GamePlayControllerFragment"
     }
 }

@@ -1,12 +1,12 @@
-package tv.vizbee.movidletv.adapter
+package tv.vizbee.movidletv.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import tv.vizbee.movidletv.databinding.ItemScoresRecyclerViewBinding
-import tv.vizbee.movidletv.vizbee.PlayerManager
+import tv.vizbee.movidletv.data.model.Player
 
-class ScoresRecyclerAdapter(val players: ArrayList<PlayerManager.Player> = arrayListOf()) :
+class ScoresRecyclerAdapter(val players: ArrayList<Player> = arrayListOf()) :
     RecyclerView.Adapter<ScoresRecyclerAdapter.ScoresViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScoresViewHolder {

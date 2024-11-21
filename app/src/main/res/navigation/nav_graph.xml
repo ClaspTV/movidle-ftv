@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <action
+        android:id="@+id/action_to_exit"
+        app:popUpTo="@id/splashFragment"
+        app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="tv.vizbee.movidletv.ui.fragment.SplashFragment"
+        android:label="SplashFragment">
+        <action
+            android:id="@+id/action_splashFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="tv.vizbee.movidletv.ui.fragment.WelcomeFragment"
+        android:label="WelcomeFragment">
+        <action
+            android:id="@+id/action_welcomeFragment_to_playerConnectedFragemnt"
+            app:destination="@id/playerConnectedFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/playerConnectedFragment"
+        android:name="tv.vizbee.movidletv.ui.fragment.PlayerConnectedFragment"
+        android:label="PlayerConnectedFragment">
+        <action
+            android:id="@+id/action_playerConnectedFragment_to_waitingForPlayersFragment"
+            app:destination="@id/waitingForPlayersFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/waitingForPlayersFragment"
+        android:name="tv.vizbee.movidletv.ui.fragment.WaitingForPlayersFragment"
+        android:label="WaitingForPlayersFragment">
+        <action
+            android:id="@+id/action_waitingForPlayersFragment_to_gamePlayControllerFragment"
+            app:destination="@id/gamePlayControllerFragment"
+            app:restoreState="true">
+            <argument
+                android:name="contentPosition"
+                app:argType="integer"
+                app:defaultValue="0" />
+            <argument
+                android:name="clipPosition"
+                app:argType="integer"
+                app:defaultValue="0" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/gamePlayControllerFragment"
+        android:name="tv.vizbee.movidletv.ui.fragment.GamePlayControllerFragment"
+        android:label="GamePlayControllerFragment">
+        <argument
+            android:name="contentPosition"
+            app:argType="integer"
+            app:defaultValue="0" />
+        <argument
+            android:name="clipPosition"
+            app:argType="integer"
+            app:defaultValue="0" />
+        <action
+            android:id="@+id/action_gamePlayControllerFragment_to_scoresFragnent"
+            app:destination="@id/scoresFragnent">
+            <argument
+                android:name="contentPosition"
+                app:argType="integer"
+                app:defaultValue="0" />
+            <argument
+                android:name="clipPosition"
+                app:argType="integer"
+                app:defaultValue="0" />
+            <argument
+                android:name="forMovie"
+                app:argType="boolean"
+                app:defaultValue="true" />
+        </action>
+        <action
+            android:id="@+id/action_gamePlayControllerFragment_to_playerActivity"
+            app:destination="@id/playerActivity">
+            <argument
+                android:name="videoUrl"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/scoresFragnent"
+        android:name="tv.vizbee.movidletv.ui.fragment.ScoresFragment"
+        android:label="ScoresFragment">
+        <argument
+            android:name="contentPosition"
+            app:argType="integer"
+            app:defaultValue="0" />
+        <argument
+            android:name="clipPosition"
+            app:argType="integer"
+            app:defaultValue="0" />
+        <action
+            android:id="@+id/action_scoreFragment_to_gamePlayControllerFragment"
+            app:destination="@id/gamePlayControllerFragment" />
+    </fragment>
+
+    <activity
+        android:id="@+id/playerActivity"
+        android:name="tv.vizbee.movidletv.ui.activity.PlayerActivity"
+        android:label="PlayerActivity" />
+</navigation>

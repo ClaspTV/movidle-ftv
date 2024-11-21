@@ -1,6 +1,7 @@
 package tv.vizbee.movidletv
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 import tv.vizbee.movidletv.vizbee.VizbeeWrapper
 
 class MovidleApp : Application() {

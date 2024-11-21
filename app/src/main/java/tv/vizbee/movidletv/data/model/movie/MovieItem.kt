@@ -1,4 +1,4 @@
-package tv.vizbee.movidletv.model.movie
+package tv.vizbee.movidletv.data.model.movie
 
 data class MovieItem(
     var name: String? = null,
