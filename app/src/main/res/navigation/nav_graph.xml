@@ -69,6 +69,10 @@
             android:name="clipPosition"
             app:argType="integer"
             app:defaultValue="0" />
+        <argument
+            android:name="areScoresShown"
+            app:argType="boolean"
+            app:defaultValue="false" />
         <action
             android:id="@+id/action_gamePlayControllerFragment_to_scoresFragnent"
             app:destination="@id/scoresFragnent">
@@ -106,6 +110,10 @@
             android:name="clipPosition"
             app:argType="integer"
             app:defaultValue="0" />
+        <argument
+            android:name="forMovie"
+            app:argType="boolean"
+            app:defaultValue="true" />
         <action
             android:id="@+id/action_scoreFragment_to_gamePlayControllerFragment"
             app:destination="@id/gamePlayControllerFragment" />

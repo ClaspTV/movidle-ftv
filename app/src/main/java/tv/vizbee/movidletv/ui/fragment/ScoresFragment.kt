@@ -16,6 +16,7 @@ import tv.vizbee.movidletv.data.model.AppState
 import tv.vizbee.movidletv.data.model.VideoStorage
 import tv.vizbee.movidletv.databinding.FragmentScoresBinding
 import tv.vizbee.movidletv.ui.adapter.ScoresRecyclerAdapter
+import tv.vizbee.movidletv.ui.custom.CustomItemDecoration
 import tv.vizbee.movidletv.vizbee.PlayerManager
 import tv.vizbee.movidletv.vizbee.VizbeeWrapper
 
@@ -30,7 +31,12 @@ class ScoresFragment : BaseFragment<FragmentScoresBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         // Setup
-        binding.gameScoreTitle.text = "Movie ${args.contentPosition + 1} Completed"
+        if (args.forMovie) {
+            binding.gameScoreTitle.text = "Movie ${args.contentPosition + 1} Completed"
+        } else {
+            binding.gameScoreTitle.text = "Movie ${args.contentPosition + 1} - Clip ${args.clipPosition} Completed"
+        }
+        binding.scoresRecyclerView.addItemDecoration(CustomItemDecoration())
 
         // Listeners
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -50,15 +56,21 @@ class ScoresFragment : BaseFragment<FragmentScoresBinding>() {
         }
 
         lifecycleScope.launch {
-            delay(30000)
+            if (args.forMovie) {
+                delay(30000)
+            } else {
+                delay(10000)
+            }
 
-            if (VideoStorage.getMovie(args.contentPosition + 1) != null) {
+            if (VideoStorage.getMovie(args.contentPosition + 1) != null ||
+                VideoStorage.getMovieClip(args.contentPosition, args.clipPosition) != null
+            ) {
                 Log.i(LOG_TAG, "trying to go to game play controller after 30 sec")
 //                findNavController().navigateUp()
                 findNavController().navigate(
                     ScoresFragmentDirections.actionScoreFragmentToGamePlayControllerFragment(
-                        args.contentPosition + 1,
-                        0
+                        args.contentPosition,
+                        args.clipPosition, true
                     )
                 )
             } else {

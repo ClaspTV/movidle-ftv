@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/playerNameTextView"
-    style="@style/TitleTextViewStyle"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_marginTop="16dp"
-    android:background="@drawable/rounded_bg"
-    android:gravity="center"
-    android:text="Player1"
-    android:textColor="@android:color/black" />
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingVertical="9dp">
+
+    <ImageView
+        android:id="@+id/itemScoreAvatarImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="16dp"
+        android:src="@drawable/avatar" />
+
+    <TextView
+        android:id="@+id/playerNameTextView"
+        style="@style/TitleTextViewStyle"
+        android:layout_width="match_parent"
+        android:layout_gravity="center_vertical"
+        android:text="Player1"
+        android:textColor="@android:color/black" />
+</LinearLayout>

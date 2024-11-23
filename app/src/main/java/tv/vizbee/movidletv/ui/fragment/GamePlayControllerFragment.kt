@@ -21,6 +21,7 @@ import tv.vizbee.movidletv.vizbee.VizbeeXWrapper
 class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBinding>() {
     private var contentPosition: Int = 0
     private var clipPosition: Int = 0
+    private var areScoresShown: Boolean= false
     private val args: GamePlayControllerFragmentArgs by navArgs()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentGamePlayControllerBinding {
@@ -48,6 +49,13 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
 
         contentPosition = args.contentPosition
         clipPosition = args.clipPosition
+        areScoresShown = args.areScoresShown
+        if (areScoresShown) {
+            if (VideoStorage.getMovieClip(contentPosition, clipPosition) == null) {
+                contentPosition++
+                clipPosition = 0
+            }
+        }
     }
 
     override fun onResume() {
@@ -55,6 +63,8 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
         Log.i(LOG_TAG, "OnResume invoked")
 
         if (clipPosition == 0) {
+            playVideo()
+        } else if (areScoresShown) {
             playVideo()
         } else {
             val clipSize = VideoStorage.getMovie(contentPosition)?.clips?.size ?: 0
@@ -68,7 +78,7 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
                         sendGameStatus("movie_completed", clipPosition - 1)
                         navigateToGameScoreActivity()
                     } else {
-                        playVideo()
+                        navigateToGameScoreActivity(forMovie = false)
                     }
                 }
             }
@@ -76,7 +86,11 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
     }
 
     private fun navigateToGameScoreActivity(forMovie: Boolean = true) {
-        val action = GamePlayControllerFragmentDirections.actionGamePlayControllerFragmentToScoresFragnent(contentPosition, clipPosition, forMovie)
+        val action = GamePlayControllerFragmentDirections.actionGamePlayControllerFragmentToScoresFragnent(
+            contentPosition,
+            clipPosition,
+            forMovie
+        )
         contentPosition++
         clipPosition = 0
 //        if (VideoStorage.getMovie(contentPosition) == null) {
@@ -107,6 +121,7 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
 
     private fun playVideo() {
         VideoStorage.getMovieClip(contentPosition, clipPosition)?.url?.let { videoUrl ->
+            areScoresShown = false
             sendGameStatus("clip_started")
 
             clipPosition++
@@ -144,7 +159,7 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
         Log.i(LOG_TAG, "onStop invoked")
     }
 
-    companion object{
+    companion object {
         private const val LOG_TAG = "GamePlayControllerFragment"
     }
 }

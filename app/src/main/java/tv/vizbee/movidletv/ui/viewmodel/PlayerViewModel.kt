@@ -15,8 +15,11 @@ class PlayerViewModel : ViewModel() {
     }
 
     fun addPlayer(player: Player) {
-        val updatedList = _playerList.value.orEmpty() + player
-        _playerList.value = updatedList
+        val item = _playerList.value?.find { it.userId == player.userId }
+        if (item == null) {
+            val updatedList = _playerList.value.orEmpty() + player
+            _playerList.value = updatedList
+        }
     }
 
     fun removePlayer(playerId: String) {
