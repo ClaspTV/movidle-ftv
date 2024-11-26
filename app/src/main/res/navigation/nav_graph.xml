@@ -42,6 +42,9 @@
         android:id="@+id/waitingForPlayersFragment"
         android:name="tv.vizbee.movidletv.ui.fragment.WaitingForPlayersFragment"
         android:label="WaitingForPlayersFragment">
+        <argument
+            android:name="channelId"
+            app:argType="string" />
         <action
             android:id="@+id/action_waitingForPlayersFragment_to_gamePlayControllerFragment"
             app:destination="@id/gamePlayControllerFragment"

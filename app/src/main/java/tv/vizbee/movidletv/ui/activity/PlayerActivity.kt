@@ -244,6 +244,13 @@ class PlayerActivity : BaseActivity(), MediaSourceEventListener, Player.Listener
         }
     }
 
+    override fun onBackPressed() {
+        // Do Nothing
+        if (false){
+            super.onBackPressed()
+        }
+    }
+
     companion object {
         const val LOG_TAG = "PlayerActivity"
     }

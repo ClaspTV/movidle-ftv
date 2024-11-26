@@ -39,7 +39,8 @@
                 android:id="@+id/titleText"
                 style="@style/TitleTextViewStyle"
                 android:layout_marginBottom="16dp"
-                android:text="MOVIE123"
+                android:text="movie123"
+                android:textAllCaps="true"
                 android:textSize="48sp" />
 
             <TextView

@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import tv.vizbee.movidletv.databinding.ItemScoresRecyclerViewBinding
 import tv.vizbee.movidletv.data.model.Player
 
@@ -18,7 +19,7 @@ class ScoresRecyclerAdapter(val players: ArrayList<Player> = arrayListOf()) :
     }
 
     override fun onBindViewHolder(holder: ScoresViewHolder, position: Int) {
-        holder.bind(players[position].score, position, players[position].userName)
+        holder.bind(players[position].score, position, players[position].userName, players[position].userAvatar)
 
         val context = holder.itemView.context
         val itemCount = itemCount
@@ -36,12 +37,22 @@ class ScoresRecyclerAdapter(val players: ArrayList<Player> = arrayListOf()) :
         } else {
             when (position) {
                 0 -> GradientDrawable().apply {
-                    cornerRadii = floatArrayOf(roundCorner, roundCorner, roundCorner, roundCorner, 0f, 0f, 0f, 0f) // Top rounded
+                    cornerRadii =
+                        floatArrayOf(roundCorner, roundCorner, roundCorner, roundCorner, 0f, 0f, 0f, 0f) // Top rounded
                     setColor(Color.parseColor("#80FFFFFF"))
                 }
 
                 itemCount - 1 -> GradientDrawable().apply {
-                    cornerRadii = floatArrayOf(0f, 0f, 0f, 0f, roundCorner, roundCorner, roundCorner, roundCorner) // Bottom rounded
+                    cornerRadii = floatArrayOf(
+                        0f,
+                        0f,
+                        0f,
+                        0f,
+                        roundCorner,
+                        roundCorner,
+                        roundCorner,
+                        roundCorner
+                    ) // Bottom rounded
                     setColor(Color.parseColor("#80FFFFFF"))
                 }
 
@@ -58,10 +69,14 @@ class ScoresRecyclerAdapter(val players: ArrayList<Player> = arrayListOf()) :
 
     inner class ScoresViewHolder(private val binding: ItemScoresRecyclerViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(score: String, position: Int, username: String) {
+        fun bind(score: String, position: Int, username: String, userAvatar: String) {
             binding.itemScoreRankTextView.text = "${position + 1}."
             binding.itemScorePlayerNameTextView.text = "${username}"
             binding.itemScoreScoreTextView.text = "$score"
+            Glide.with(binding.root.context)
+                .load(userAvatar)
+                .circleCrop()
+                .into(binding.itemScoreAvatarImageView)
         }
     }
 }

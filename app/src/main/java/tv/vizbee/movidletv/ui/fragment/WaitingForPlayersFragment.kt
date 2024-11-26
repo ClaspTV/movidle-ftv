@@ -5,7 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import tv.vizbee.movidletv.data.model.AppState
 import tv.vizbee.movidletv.databinding.FragmentWaitingForPlayersBinding
@@ -15,6 +18,7 @@ import tv.vizbee.movidletv.vizbee.PlayerManager
 
 class WaitingForPlayersFragment : BaseFragment<FragmentWaitingForPlayersBinding>() {
     private val playersAdapter by lazy { WaitingForPlayersRecyclerAdapter() }
+    private val args: WaitingForPlayersFragmentArgs by navArgs()
 
     override fun inflateBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentWaitingForPlayersBinding {
         return FragmentWaitingForPlayersBinding.inflate(inflater, container, false)
@@ -24,6 +28,7 @@ class WaitingForPlayersFragment : BaseFragment<FragmentWaitingForPlayersBinding>
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        binding.titleText.text = args.channelId.split("-")[1]
 
         appViewModel.appState.observe(viewLifecycleOwner) { state ->
             if (state is AppState.GameStarted) {
@@ -34,6 +39,14 @@ class WaitingForPlayersFragment : BaseFragment<FragmentWaitingForPlayersBinding>
         playerViewModel.playerList.observe(viewLifecycleOwner) { players ->
             playersAdapter.updateAll(players)
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (playersAdapter.getAll().isEmpty()) {
+                    findNavController().navigateUp()
+                }
+            }
+        })
     }
 
     private fun setupRecyclerView() {

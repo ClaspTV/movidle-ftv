@@ -41,10 +41,13 @@ class ScoresFragment : BaseFragment<FragmentScoresBinding>() {
         // Listeners
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                Log.i("ScoresFrament", "onBackPressed")
-                VizbeeWrapper.clearVizbeeX()
+                if (binding.gameScoreTitle.text == "Game Completed") {
+                    Log.i("ScoresFrament", "onBackPressed")
+                    VizbeeWrapper.clearVizbeeX()
 
-                findNavController().navigateUp()
+//                    findNavController().navigateUp()
+                    findNavController().navigate(R.id.playerConnectedFragment)
+                }
             }
         })
 
@@ -80,8 +83,10 @@ class ScoresFragment : BaseFragment<FragmentScoresBinding>() {
         }
 
         appViewModel.appState.observe(viewLifecycleOwner) { state ->
-            if (state == AppState.WaitingForPlayers) {
-                findNavController().navigate(R.id.waitingForPlayersFragment)
+            if (state is AppState.WaitingForPlayers) {
+                findNavController().navigate(R.id.waitingForPlayersFragment, Bundle().also {
+                    it.putString("channelId", state.channelId)
+                })
             }
         }
 

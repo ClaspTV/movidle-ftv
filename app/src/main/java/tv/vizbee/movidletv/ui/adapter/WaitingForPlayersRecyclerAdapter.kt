@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import tv.vizbee.movidletv.data.model.Player
 import tv.vizbee.movidletv.databinding.ItemWaitingForPlayersRecyclerViewBinding
 
@@ -19,7 +20,7 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<Player> = 
     }
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        holder.bind("${players[position].userName}")
+        holder.bind("${players[position].userName}", players[position].userAvatar)
 
         val context = holder.itemView.context
         val itemCount = itemCount
@@ -92,8 +93,12 @@ class WaitingForPlayersRecyclerAdapter(private val players: ArrayList<Player> = 
 
     inner class PlayerViewHolder(private val binding: ItemWaitingForPlayersRecyclerViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(playerName: String) {
+        fun bind(playerName: String, userAvatar: String) {
             binding.playerNameTextView.text = playerName
+            Glide.with(binding.root.context)
+                .load(userAvatar)
+                .circleCrop()
+                .into(binding.userAvatarImageView)
         }
     }
 }

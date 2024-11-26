@@ -1,6 +1,7 @@
 package tv.vizbee.movidletv.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ abstract class BaseFragment<B : ViewBinding> : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.i(LOG_TAG, "onCreateView: ${this::class.java.simpleName}")
         _binding = inflateBinding(inflater, container)
         return binding.root
     }
@@ -64,5 +66,9 @@ abstract class BaseFragment<B : ViewBinding> : Fragment() {
 
     open fun onScoreUpdate(payload: JSONObject) {
         // Child class will implement this if needed
+    }
+
+    companion object {
+        private const val LOG_TAG = "BaseFragment"
     }
 }

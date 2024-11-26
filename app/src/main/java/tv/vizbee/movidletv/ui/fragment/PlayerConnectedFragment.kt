@@ -35,7 +35,7 @@ class PlayerConnectedFragment : BaseFragment<FragmentPlayerConnectedBinding>() {
                 findNavController().navigate(R.id.welcomeFragment)
             } else if (state is AppState.WaitingForPlayers) {
                 val action =
-                    PlayerConnectedFragmentDirections.actionPlayerConnectedFragmentToWaitingForPlayersFragment()
+                    PlayerConnectedFragmentDirections.actionPlayerConnectedFragmentToWaitingForPlayersFragment(state.channelId)
                 findNavController().navigate(action)
             }
         }

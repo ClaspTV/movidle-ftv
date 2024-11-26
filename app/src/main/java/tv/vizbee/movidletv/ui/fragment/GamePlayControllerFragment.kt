@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -56,6 +57,12 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
                 clipPosition = 0
             }
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do Nothing
+            }
+        })
     }
 
     override fun onResume() {
@@ -78,6 +85,7 @@ class GamePlayControllerFragment : BaseFragment<FragmentGamePlayControllerBindin
                         sendGameStatus("movie_completed", clipPosition - 1)
                         navigateToGameScoreActivity()
                     } else {
+                        sendGameStatus("movie_guess_completed", clipPosition - 1)
                         navigateToGameScoreActivity(forMovie = false)
                     }
                 }

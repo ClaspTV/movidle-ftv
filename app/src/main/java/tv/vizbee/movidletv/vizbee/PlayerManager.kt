@@ -62,12 +62,12 @@ object PlayerManager {
         }
     }
 
-    fun addPlayer(device: VizbeeDevice?, userId: String, userName: String) {
+    fun addPlayer(device: VizbeeDevice?, userId: String, userName: String, userAvatar: String) {
         Log.i("PlayerManager", "addPlayer invoked. username = $userName, userId = $userId, device = $device")
 
         device?.let { actualDevice ->
 //            if (actualDevice.deviceType == VizbeeDeviceType.ANDROID_MOBILE || actualDevice.deviceType == VizbeeDeviceType.IOS) {
-            val player = Player(userName, userId)
+            val player = Player(userName, userId, userAvatar = userAvatar)
             _players[userId] = player
             this.playerViewModel?.addPlayer(player)
             Log.i("PlayerManager", "players = ${_players.values}")

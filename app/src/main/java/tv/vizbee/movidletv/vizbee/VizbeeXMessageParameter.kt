@@ -16,6 +16,7 @@ enum class VizbeeXMessageParameter(val value: String) {
 
     USER_ID("userId"),
     USER_NAME("userName"),
+    USER_AVATAR("userAvatar"),
 
     SCORE("score"),
 
